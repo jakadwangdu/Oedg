@@ -13,8 +13,9 @@ import MusicPlayer from '../components/music/MusicPlayer';
 import Whiteboard from '../components/whiteboard/Whiteboard';
 import GameRoom from '../components/games/GameRoom';
 import QRCodeModal from '../components/room/QRCodeModal';
+import HeroField from '../components/HeroField';
 
-const REACTION_EMOJIS = ['❤️', '🕯️', '✨', '💋', '🌹', '🥂'];
+const REACTION_EMOJIS = ['♡', '✦', '☾', '❋', '◌', '✧'];
 
 export default function RoomPage() {
   const { roomId } = useParams();
@@ -216,13 +217,13 @@ export default function RoomPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'var(--color-void-canvas)',
-        color: 'var(--color-ash)',
+        background: 'var(--k)',
+        color: 'var(--w2)',
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--accent-violet)' }}>✦</div>
-          <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: '1.15rem', fontWeight: 500, color: 'var(--color-bone)' }}>
-            Opening dusk workspace...
+          <div style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--w)' }}>✦</div>
+          <p style={{ fontSize: '1.15rem', fontWeight: 500, color: 'var(--w1)', letterSpacing: '-0.02em' }}>
+            Entering room...
           </p>
         </div>
       </div>
@@ -237,33 +238,33 @@ export default function RoomPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'var(--color-void-canvas)',
+        background: 'var(--k)',
         padding: '1.5rem',
       }}>
         <div style={{
           textAlign: 'center',
-          background: 'var(--color-graphite)',
-          border: '1px solid var(--color-hairline)',
-          borderRadius: 'var(--radius-card)',
+          background: 'var(--k1)',
+          border: '1px solid var(--line)',
+          borderRadius: 24,
           padding: '2.5rem',
           maxWidth: 420,
         }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '1rem', opacity: 0.8 }}>🥀</div>
+          <div style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--w3)' }}>✕</div>
           <h2 style={{
-            fontFamily: 'var(--font-dm-sans)',
             fontSize: '1.35rem',
             fontWeight: 500,
             marginBottom: '0.5rem',
-            color: 'var(--color-bone)',
+            color: 'var(--w)',
+            letterSpacing: '-0.03em',
           }}>
-            Workspace Unavailable
+            Room Unavailable
           </h2>
-          <p style={{ color: 'var(--color-slate)', marginBottom: '1.75rem', fontSize: '0.875rem' }}>
+          <p style={{ color: 'var(--w2)', marginBottom: '1.75rem', fontSize: '0.875rem', lineHeight: 1.5 }}>
             {error}
           </p>
           <button
             onClick={() => navigate('/dashboard')}
-            className="btn-dimension-primary"
+            className="pill"
           >
             Return to Dashboard
           </button>
@@ -272,7 +273,7 @@ export default function RoomPage() {
     );
   }
 
-  // Screen 3: Guest Entry / Password Protection Screen
+  // Screen 3: Guest Entry / Password Protection Screen (Section 10)
   if (needsPassword || (!user && !token)) {
     return (
       <div style={{
@@ -280,67 +281,55 @@ export default function RoomPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'var(--color-void-canvas)',
+        background: '#000',
         padding: '1.5rem',
         position: 'relative',
+        overflow: 'hidden',
       }}>
-        <div style={{
-          position: 'absolute',
-          top: '30%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 500,
-          height: 350,
-          borderRadius: '50%',
-          background: 'radial-gradient(ellipse at center, rgba(107, 98, 242, 0.12) 0%, transparent 70%)',
-          pointerEvents: 'none',
-          filter: 'blur(50px)',
-        }} />
+        {/* Background swirling partner lights */}
+        <HeroField densityMultiplier={0.35} interactive={false} />
 
         <div style={{
           width: '100%',
           maxWidth: 420,
-          background: 'var(--color-graphite)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
-          border: '1px solid var(--color-hairline)',
-          borderRadius: 'var(--radius-card)',
-          padding: '2.25rem 2rem',
+          background: 'var(--k1)',
+          border: '1px solid var(--line)',
+          borderRadius: 24,
+          padding: '2.5rem 2rem',
           textAlign: 'center',
           position: 'relative',
           zIndex: 1,
+          boxShadow: '0 40px 120px rgba(255, 255, 255, 0.05)',
         }}>
-          <div style={{ fontSize: '2rem', marginBottom: '0.75rem', color: 'var(--accent-violet)' }}>
-            {needsPassword ? '🔒' : '✦'}
+          <div style={{ fontSize: '2rem', marginBottom: '0.75rem', color: 'var(--w)' }}>
+            {needsPassword ? '🔒' : '☾'}
           </div>
 
           <h2 style={{
-            fontFamily: 'var(--font-dm-sans)',
             fontSize: '1.65rem',
             fontWeight: 500,
-            color: 'var(--color-bone)',
-            letterSpacing: '-0.035em',
-            marginBottom: '0.35rem',
+            color: 'var(--w)',
+            letterSpacing: '-0.04em',
+            marginBottom: '0.4rem',
           }}>
             {room?.name || 'Private Sanctuary'}
           </h2>
 
           <p style={{
-            fontFamily: 'var(--font-geist)',
-            color: 'var(--color-ash)',
+            color: 'var(--w2)',
             fontSize: '0.875rem',
             marginBottom: '1.75rem',
             lineHeight: 1.5,
           }}>
             {needsPassword
               ? 'This date room is protected with a private password.'
-              : 'Direct guest entry — no registration required to join.'}
+              : 'Direct guest entry. No accounts or signup required.'}
           </p>
 
           <form onSubmit={handleGuestJoin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {!user && (
               <div style={{ textAlign: 'left' }}>
-                <label style={{ fontSize: '0.8125rem', color: 'var(--color-ash)', marginBottom: '0.35rem', display: 'block' }}>
+                <label style={{ fontSize: '0.8125rem', color: 'var(--w2)', marginBottom: '0.35rem', display: 'block' }}>
                   Your Display Name
                 </label>
                 <input
@@ -349,12 +338,14 @@ export default function RoomPage() {
                   placeholder="e.g. Alex or Sweetheart"
                   style={{
                     width: '100%',
-                    background: '#1a1a1a',
-                    border: '1px solid var(--color-hairline)',
-                    borderRadius: 'var(--radius-ui)',
+                    background: 'var(--k2)',
+                    border: '1px solid var(--line)',
+                    borderRadius: 12,
                     padding: '0.75rem 1rem',
-                    color: 'var(--color-bone)',
+                    color: 'var(--w)',
                     fontSize: '0.9375rem',
+                    outline: 'none',
+                    boxSizing: 'border-box',
                   }}
                 />
               </div>
@@ -362,23 +353,25 @@ export default function RoomPage() {
 
             {needsPassword && (
               <div style={{ textAlign: 'left' }}>
-                <label style={{ fontSize: '0.8125rem', color: 'var(--color-ash)', marginBottom: '0.35rem', display: 'block' }}>
+                <label style={{ fontSize: '0.8125rem', color: 'var(--w2)', marginBottom: '0.35rem', display: 'block' }}>
                   Room Password
                 </label>
                 <input
                   type="password"
                   value={passwordInput}
                   onChange={(e) => setPasswordInput(e.target.value)}
-                  placeholder="Enter access code..."
+                  placeholder="Enter password..."
                   required
                   style={{
                     width: '100%',
-                    background: '#1a1a1a',
-                    border: '1px solid var(--color-hairline)',
-                    borderRadius: 'var(--radius-ui)',
+                    background: 'var(--k2)',
+                    border: '1px solid var(--line)',
+                    borderRadius: 12,
                     padding: '0.75rem 1rem',
-                    color: 'var(--color-bone)',
+                    color: 'var(--w)',
                     fontSize: '0.9375rem',
+                    outline: 'none',
+                    boxSizing: 'border-box',
                   }}
                 />
               </div>
@@ -386,12 +379,12 @@ export default function RoomPage() {
 
             {passwordError && (
               <div style={{
-                color: '#f87171',
+                color: 'var(--w1)',
                 fontSize: '0.8125rem',
                 padding: '0.65rem',
-                borderRadius: 'var(--radius-ui)',
-                background: 'rgba(239, 68, 68, 0.08)',
-                border: '1px solid rgba(239, 68, 68, 0.25)',
+                borderRadius: 12,
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
               }}>
                 {passwordError}
               </div>
@@ -400,25 +393,25 @@ export default function RoomPage() {
             <button
               type="submit"
               disabled={isJoiningGuest}
-              className="btn-dimension-primary"
+              className="pill"
               style={{
                 width: '100%',
-                padding: '0.8125rem',
+                padding: '12px',
                 marginTop: '0.5rem',
                 opacity: isJoiningGuest ? 0.7 : 1,
+                fontSize: '0.95rem',
               }}
             >
-              {isJoiningGuest ? 'Connecting...' : 'Enter Workspace ✦'}
+              {isJoiningGuest ? 'Connecting...' : 'Enter the room'}
             </button>
           </form>
 
-          <p style={{
+          <p className="mono" style={{
             fontSize: '0.75rem',
-            color: 'var(--color-slate)',
+            color: 'var(--w3)',
             marginTop: '1.75rem',
-            fontFamily: 'var(--font-mono)',
           }}>
-            ✦ Synchronized video, music, live drawing, and voice
+            Direct peer encrypted link &middot; Geist typography
           </p>
         </div>
       </div>
@@ -431,7 +424,7 @@ export default function RoomPage() {
       height: '100vh',
       display: 'flex',
       flexDirection: 'column',
-      background: 'var(--color-void-canvas)',
+      background: 'var(--k)',
       overflow: 'hidden',
       position: 'relative',
     }}>
@@ -452,7 +445,7 @@ export default function RoomPage() {
       {/* =========================================================================
           Top Header Bar (Adaptive Desktop vs Mobile)
           ========================================================================= */}
-      <header className="glass-nav mobile-header-bar" style={{
+      <header className="mobile-header-bar" style={{
         padding: '0.65rem 1.25rem',
         display: 'flex',
         alignItems: 'center',
@@ -460,17 +453,19 @@ export default function RoomPage() {
         gap: '0.75rem',
         zIndex: 20,
         flexShrink: 0,
+        background: 'var(--k1)',
+        borderBottom: '1px solid var(--line)',
       }}>
         {/* Left: Sanctuary identity & duration */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0 }}>
           <button
             onClick={() => navigate('/dashboard')}
             style={{
-              background: '#1a1a1a',
-              border: '1px solid var(--color-hairline)',
-              color: 'var(--color-slate)',
+              background: 'var(--k2)',
+              border: '1px solid var(--line)',
+              color: 'var(--w2)',
               padding: '0.35rem 0.75rem',
-              borderRadius: 'var(--radius-pill)',
+              borderRadius: 999,
               fontSize: '0.75rem',
               fontWeight: 500,
               flexShrink: 0,
@@ -483,10 +478,9 @@ export default function RoomPage() {
           <div style={{ minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <h2 style={{
-                fontFamily: 'var(--font-dm-sans)',
                 fontSize: '0.9375rem',
                 fontWeight: 500,
-                color: 'var(--color-bone)',
+                color: 'var(--w)',
                 letterSpacing: '-0.02em',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
@@ -497,12 +491,12 @@ export default function RoomPage() {
               </h2>
               {room?.hasPassword && <span style={{ fontSize: '0.75rem' }} title="Password Protected">🔒</span>}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.6875rem', color: 'var(--color-slate)' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ash)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.6875rem', color: 'var(--w3)' }}>
+              <span className="mono" style={{ color: 'var(--w2)' }}>
                 {formatTime(elapsedSeconds)}
               </span>
               <span>&bull;</span>
-              <span style={{ color: participants.length > 1 ? 'var(--success)' : 'var(--color-slate)', fontFamily: 'var(--font-mono)' }}>
+              <span className="mono" style={{ color: participants.length > 1 ? 'var(--w)' : 'var(--w3)' }}>
                 {participants.length} online
               </span>
             </div>
@@ -525,10 +519,10 @@ export default function RoomPage() {
             className="desktop-only"
             style={{
               padding: '0.4rem 0.85rem',
-              borderRadius: 'var(--radius-pill)',
-              background: syncWithPartner ? 'rgba(16, 185, 129, 0.12)' : '#1a1a1a',
-              border: `1px solid ${syncWithPartner ? 'rgba(16, 185, 129, 0.3)' : 'var(--color-hairline)'}`,
-              color: syncWithPartner ? 'var(--success)' : 'var(--color-slate)',
+              borderRadius: 999,
+              background: syncWithPartner ? 'var(--glass)' : 'var(--k2)',
+              border: `1px solid ${syncWithPartner ? 'var(--w)' : 'var(--line)'}`,
+              color: syncWithPartner ? 'var(--w)' : 'var(--w3)',
               fontSize: '0.75rem',
               fontWeight: 500,
               alignItems: 'center',
@@ -548,10 +542,10 @@ export default function RoomPage() {
               className="desktop-only"
               style={{
                 padding: '0.4rem 0.85rem',
-                borderRadius: 'var(--radius-pill)',
-                background: pipVideoOpen ? '#262626' : '#1a1a1a',
-                border: '1px solid var(--color-hairline)',
-                color: pipVideoOpen ? 'var(--color-bone)' : 'var(--color-ash)',
+                borderRadius: 999,
+                background: pipVideoOpen ? 'var(--k3)' : 'var(--k2)',
+                border: '1px solid var(--line)',
+                color: pipVideoOpen ? 'var(--w)' : 'var(--w2)',
                 fontSize: '0.75rem',
                 alignItems: 'center',
                 gap: '0.35rem',
@@ -570,10 +564,10 @@ export default function RoomPage() {
             className="desktop-only"
             style={{
               padding: '0.4rem 0.85rem',
-              borderRadius: 'var(--radius-pill)',
-              background: desktopChatOpen ? '#1a1a1a' : 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid var(--color-hairline)',
-              color: desktopChatOpen ? 'var(--color-ash)' : 'var(--color-snow-white)',
+              borderRadius: 999,
+              background: desktopChatOpen ? 'var(--k2)' : 'var(--glass)',
+              border: `1px solid ${desktopChatOpen ? 'var(--line)' : 'var(--w)'}`,
+              color: desktopChatOpen ? 'var(--w2)' : 'var(--w)',
               fontSize: '0.75rem',
               alignItems: 'center',
               gap: '0.35rem',
@@ -591,10 +585,10 @@ export default function RoomPage() {
             className="mobile-only"
             style={{
               padding: '0.35rem 0.75rem',
-              borderRadius: 'var(--radius-pill)',
-              background: '#1a1a1a',
-              border: '1px solid var(--color-hairline)',
-              color: 'var(--color-bone)',
+              borderRadius: 999,
+              background: 'var(--k2)',
+              border: '1px solid var(--line)',
+              color: 'var(--w1)',
               fontSize: '0.75rem',
               display: 'flex',
               alignItems: 'center',
@@ -603,7 +597,7 @@ export default function RoomPage() {
             }}
           >
             <span>💬</span>
-            <span>{messages.length}</span>
+            <span className="mono">{messages.length}</span>
           </button>
 
           {/* QR Code Scan to Join Pill */}
@@ -611,10 +605,10 @@ export default function RoomPage() {
             onClick={() => setQrModalOpen(true)}
             style={{
               padding: '0.35rem 0.85rem',
-              borderRadius: 'var(--radius-pill)',
-              background: 'var(--color-snow-white)',
-              color: 'var(--color-graphite)',
-              border: '1px solid var(--color-snow-white)',
+              borderRadius: 999,
+              background: 'var(--w)',
+              color: 'var(--k)',
+              border: '1px solid var(--w)',
               fontSize: '0.75rem',
               fontWeight: 500,
               display: 'flex',
@@ -638,12 +632,12 @@ export default function RoomPage() {
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 35,
-          background: 'var(--color-graphite)',
-          border: '1px solid var(--color-hairline-strong)',
+          background: 'var(--k1)',
+          border: '1px solid var(--line)',
           backdropFilter: 'blur(8px)',
-          color: 'var(--color-bone)',
+          color: 'var(--w1)',
           padding: '0.35rem 1.15rem',
-          borderRadius: 'var(--radius-pill)',
+          borderRadius: 999,
           fontSize: '0.8125rem',
           fontWeight: 500,
           animation: 'fadeIn 180ms ease-out',
@@ -686,10 +680,10 @@ export default function RoomPage() {
               width: window.innerWidth < 768 ? 140 : 280,
               height: window.innerWidth < 768 ? 105 : 200,
               zIndex: 40,
-              borderRadius: 'var(--radius-card)',
+              borderRadius: 16,
               overflow: 'hidden',
-              border: '1px solid var(--color-hairline-strong)',
-              background: '#0a0a0a',
+              border: '1px solid var(--line)',
+              background: 'var(--k)',
             }}>
               <VideoGrid roomId={roomId} />
             </div>
@@ -713,9 +707,9 @@ export default function RoomPage() {
           ========================================================================= */}
       <footer style={{
         padding: '0.45rem 1.25rem',
-        background: 'rgba(22, 22, 22, 0.9)',
+        background: 'var(--k1)',
         backdropFilter: 'blur(10px)',
-        borderTop: '1px solid var(--color-hairline)',
+        borderTop: '1px solid var(--line)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -723,7 +717,7 @@ export default function RoomPage() {
         flexShrink: 0,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', overflowX: 'auto', maxWidth: '100%' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--color-slate)', marginRight: '0.25rem', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: '0.75rem', color: 'var(--w3)', marginRight: '0.25rem', whiteSpace: 'nowrap' }}>
             Instant Pulse:
           </span>
           {REACTION_EMOJIS.map((emoji) => (
@@ -731,11 +725,12 @@ export default function RoomPage() {
               key={emoji}
               onClick={() => sendReaction(emoji)}
               style={{
-                background: '#1a1a1a',
-                border: '1px solid var(--color-hairline)',
-                borderRadius: 'var(--radius-pill)',
+                background: 'var(--k2)',
+                border: '1px solid var(--line)',
+                borderRadius: 999,
                 padding: '0.25rem 0.6rem',
                 fontSize: '0.9375rem',
+                color: 'var(--w1)',
                 cursor: 'pointer',
                 flexShrink: 0,
               }}
@@ -746,12 +741,11 @@ export default function RoomPage() {
           ))}
         </div>
 
-        <span className="desktop-only" style={{
+        <span className="desktop-only mono" style={{
           fontSize: '0.7rem',
-          color: 'var(--color-slate)',
-          fontFamily: 'var(--font-mono)',
+          color: 'var(--w3)',
         }}>
-          ✦ Dimension Sanctuary v2.5
+          ✦ Oedg
         </span>
       </footer>
 
@@ -760,20 +754,20 @@ export default function RoomPage() {
           ========================================================================= */}
       <nav className="mobile-bottom-nav" style={{
         display: 'none',
-        background: 'rgba(18, 18, 18, 0.98)',
+        background: 'var(--k1)',
         backdropFilter: 'blur(16px)',
-        borderTop: '1px solid var(--color-hairline)',
+        borderTop: '1px solid var(--line)',
         padding: '0.45rem 0.5rem',
         justifyContent: 'space-around',
         zIndex: 30,
         flexShrink: 0,
       }}>
         {[
-          { id: 'movie', label: 'Cinema', icon: '🎬' },
-          { id: 'music', label: 'Dhun', icon: '🎵' },
-          { id: 'whiteboard', label: 'Canvas', icon: '🎨' },
-          { id: 'games', label: 'Arcade', icon: '🎮' },
-          { id: 'call', label: 'Video', icon: '📹' },
+          { id: 'movie', label: 'Cinema', icon: '◫' },
+          { id: 'music', label: 'Dhun', icon: '♩' },
+          { id: 'whiteboard', label: 'Canvas', icon: '✎' },
+          { id: 'games', label: 'Arcade', icon: '❖' },
+          { id: 'call', label: 'Video', icon: '◉' },
         ].map((tab) => {
           const isActive = currentActivity === tab.id;
           return (
@@ -785,16 +779,16 @@ export default function RoomPage() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: '0.15rem',
-                background: isActive ? 'var(--color-snow-white)' : 'transparent',
+                background: isActive ? 'var(--w)' : 'transparent',
                 border: 'none',
-                borderRadius: 'var(--radius-pill)',
+                borderRadius: 999,
                 padding: '0.4rem 0.9rem',
-                color: isActive ? 'var(--color-graphite)' : 'var(--color-ash)',
+                color: isActive ? 'var(--k)' : 'var(--w3)',
                 fontSize: '0.6875rem',
                 fontWeight: 500,
                 minWidth: 54,
                 cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
+                transition: 'all 140ms ease',
               }}
             >
               <span style={{ fontSize: '1.1rem' }}>{tab.icon}</span>
@@ -812,7 +806,7 @@ export default function RoomPage() {
           position: 'fixed',
           inset: 0,
           zIndex: 80,
-          background: 'rgba(10, 10, 10, 0.88)',
+          background: 'rgba(0, 0, 0, 0.88)',
           backdropFilter: 'blur(12px)',
           display: 'flex',
           flexDirection: 'column',
@@ -828,8 +822,8 @@ export default function RoomPage() {
           <div style={{
             height: '82vh',
             maxHeight: '82dvh',
-            background: 'var(--color-graphite)',
-            borderTop: '1px solid var(--color-hairline-strong)',
+            background: 'var(--k1)',
+            borderTop: '1px solid var(--line)',
             borderRadius: '24px 24px 0 0',
             display: 'flex',
             flexDirection: 'column',
@@ -842,21 +836,21 @@ export default function RoomPage() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              borderBottom: '1px solid var(--color-hairline)',
-              background: '#161616',
+              borderBottom: '1px solid var(--line)',
+              background: 'var(--k2)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ color: 'var(--accent-violet)', fontSize: '0.9rem' }}>✦</span>
-                <span style={{ fontWeight: 500, color: 'var(--color-bone)', fontSize: '0.9375rem' }}>
+                <span style={{ color: 'var(--w)', fontSize: '0.9rem' }}>✦</span>
+                <span style={{ fontWeight: 500, color: 'var(--w1)', fontSize: '0.9375rem' }}>
                   Whisper Notes
                 </span>
               </div>
               <button
                 onClick={() => setMobileChatOpen(false)}
                 style={{
-                  background: '#222',
-                  border: '1px solid var(--color-hairline)',
-                  color: 'var(--color-bone)',
+                  background: 'var(--k3)',
+                  border: '1px solid var(--line)',
+                  color: 'var(--w)',
                   width: 30,
                   height: 30,
                   borderRadius: '50%',

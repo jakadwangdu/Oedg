@@ -4,12 +4,13 @@ import { useAuthStore } from '../../store/authStore';
 import { useRoomStore } from '../../store/roomStore';
 import api from '../../services/api';
 
-const QUICK_REACTIONS = ['❤️', '✨', '🥰', '🍿', '🌹', '🥂', '🧸', '💖', '🔥', '👀'];
+const MONO_REACTIONS = ['♡', '✦', '☾', '❋', '◌', '✧'];
 
 export default function ChatBox({ roomId }) {
   const { user } = useAuthStore();
   const { messages, setMessages, addMessage } = useRoomStore();
   const [text, setText] = useState('');
+  const [particles, setParticles] = useState([]);
   const messagesEndRef = useRef(null);
 
   // 1. Fetch message history
@@ -39,6 +40,9 @@ export default function ChatBox({ roomId }) {
     const handleReceive = (msg) => {
       if (msg) {
         addMessage(msg);
+        if (msg.type === 'emoji' || MONO_REACTIONS.includes(msg.text)) {
+          spawnParticle(msg.text);
+        }
       }
     };
 
@@ -52,6 +56,17 @@ export default function ChatBox({ roomId }) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const spawnParticle = (glyph) => {
+    setParticles((prev) => [
+      ...prev,
+      {
+        id: Date.now() + Math.random(),
+        glyph,
+        x: Math.random() * 70 + 15,
+      },
+    ]);
+  };
 
   const handleSend = (e) => {
     e?.preventDefault();
@@ -100,6 +115,8 @@ export default function ChatBox({ roomId }) {
       avatar: user?.avatar || '',
     };
 
+    spawnParticle(reaction);
+
     addMessage({
       _id: tempId,
       roomId,
@@ -126,66 +143,99 @@ export default function ChatBox({ roomId }) {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      background: 'var(--color-graphite)',
-      border: '1px solid var(--color-hairline)',
-      borderRadius: 'var(--radius-card)', // 24px
-      overflow: 'hidden',
-    }}>
-      {/* Header */}
-      <div style={{
-        padding: '0.85rem 1.25rem',
-        borderBottom: '1px solid var(--color-hairline)',
+    <div
+      style={{
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'rgba(22, 22, 22, 0.9)',
-      }}>
+        flexDirection: 'column',
+        height: '100%',
+        background: 'var(--k1)',
+        border: '1px solid var(--line)',
+        borderRadius: 24,
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      {/* Floating particles rising with blur */}
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          onAnimationEnd={() => setParticles((prev) => prev.filter((item) => item.id !== p.id))}
+          style={{
+            position: 'absolute',
+            bottom: 70,
+            right: `${p.x}%`,
+            fontSize: '1.45rem',
+            color: 'var(--w)',
+            textShadow: '0 0 16px rgba(255, 255, 255, 0.85)',
+            pointerEvents: 'none',
+            zIndex: 60,
+            animation: 'riseAndBlur 2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          }}
+        >
+          {p.glyph}
+        </div>
+      ))}
+
+      {/* Header */}
+      <div
+        style={{
+          padding: '0.85rem 1.25rem',
+          borderBottom: '1px solid var(--line)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'var(--k2)',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '0.9rem', color: 'var(--accent-violet)' }}>✦</span>
-          <span style={{
-            fontFamily: 'var(--font-dm-sans)',
-            fontWeight: 500,
-            fontSize: '0.9375rem',
-            color: 'var(--color-bone)',
-            letterSpacing: '-0.02em',
-          }}>
+          <span style={{ fontSize: '0.9rem', color: 'var(--w)' }}>✦</span>
+          <span
+            style={{
+              fontWeight: 500,
+              fontSize: '0.9375rem',
+              color: 'var(--w)',
+              letterSpacing: '-0.02em',
+            }}
+          >
             Whisper Notes
           </span>
         </div>
-        <span style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.75rem',
-          color: 'var(--color-slate)',
-        }}>
+        <span
+          className="mono"
+          style={{
+            fontSize: '0.75rem',
+            color: 'var(--w3)',
+          }}
+        >
           {messages.length} notes
         </span>
       </div>
 
       {/* Messages Scroll Area */}
-      <div style={{
-        flex: 1,
-        padding: '1rem',
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0.85rem',
-      }}>
+      <div
+        style={{
+          flex: 1,
+          padding: '1rem',
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.85rem',
+        }}
+      >
         {messages.length === 0 ? (
-          <div style={{
-            textAlign: 'center',
-            color: 'var(--color-slate)',
-            margin: 'auto 0',
-            fontSize: '0.8125rem',
-            padding: '2rem 1rem',
-          }}>
-            <div style={{ fontSize: '2rem', marginBottom: '0.5rem', opacity: 0.8 }}>✉️</div>
-            <p style={{ color: 'var(--color-ash)', fontWeight: 400 }}>No whispers yet.</p>
-            <p style={{ fontSize: '0.75rem', color: 'var(--color-slate)', marginTop: '0.25rem' }}>
-              Send a note or reaction to make your partner smile!
+          <div
+            style={{
+              textAlign: 'center',
+              color: 'var(--w3)',
+              margin: 'auto 0',
+              fontSize: '0.8125rem',
+              padding: '2rem 1rem',
+            }}
+          >
+            <div style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>☾</div>
+            <p style={{ color: 'var(--w2)', fontWeight: 400, margin: 0 }}>No whispers yet.</p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--w3)', marginTop: '0.25rem' }}>
+              Send a note or monochrome reaction.
             </p>
           </div>
         ) : (
@@ -196,10 +246,14 @@ export default function ChatBox({ roomId }) {
             const senderName = String(msg.sender?.username || msg.senderName || 'Partner');
             const avatar = msg.sender?.avatar || msg.senderAvatar;
 
-            const isMe = (currentUserId && senderId && currentUserId === senderId) ||
-                         (currentUsername && senderName.toLowerCase() === currentUsername);
+            const isMe =
+              (currentUserId && senderId && currentUserId === senderId) ||
+              (currentUsername && senderName.toLowerCase() === currentUsername);
 
-            const isEmojiOnly = msg.type === 'emoji' || (msg.text.length <= 4 && /\p{Emoji}/u.test(msg.text));
+            const isGlyphOnly =
+              msg.type === 'emoji' ||
+              MONO_REACTIONS.includes(msg.text) ||
+              (msg.text.length <= 4 && /\p{Emoji}/u.test(msg.text));
 
             return (
               <div
@@ -213,55 +267,69 @@ export default function ChatBox({ roomId }) {
                   alignItems: 'flex-end',
                 }}
               >
-                {/* Tiny Avatar */}
-                <div style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: '50%',
-                  background: avatar ? `url(${avatar}) center/cover` : '#222',
-                  border: '1px solid var(--color-hairline)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.65rem',
-                  fontWeight: 500,
-                  color: 'var(--color-bone)',
-                  flexShrink: 0,
-                  marginBottom: 2,
-                }}>
-                  {!avatar && (senderName?.[0]?.toUpperCase() || '?')}
+                {/* Tiny Avatar: Filled for you, outline for partner */}
+                <div
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    background: avatar
+                      ? `url(${avatar}) center/cover`
+                      : isMe
+                      ? 'var(--w)'
+                      : 'transparent',
+                    border: isMe ? 'none' : '1.5px solid var(--w)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.65rem',
+                    fontWeight: 600,
+                    color: isMe ? 'var(--k)' : 'var(--w)',
+                    flexShrink: 0,
+                    marginBottom: 2,
+                  }}
+                >
+                  {!avatar && (senderName?.[0]?.toUpperCase() || (isMe ? 'Y' : 'P'))}
                 </div>
 
                 <div>
-                  <div style={{
-                    fontSize: '0.6875rem',
-                    color: 'var(--color-slate)',
-                    marginBottom: '0.25rem',
-                    textAlign: isMe ? 'right' : 'left',
-                    fontFamily: 'var(--font-mono)',
-                  }}>
-                    {isMe ? 'You' : senderName} &bull; {new Date(msg.sentAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  <div
+                    className="mono"
+                    style={{
+                      fontSize: '0.6875rem',
+                      color: 'var(--w3)',
+                      marginBottom: '0.25rem',
+                      textAlign: isMe ? 'right' : 'left',
+                    }}
+                  >
+                    {isMe ? 'You' : senderName} &bull;{' '}
+                    {new Date(msg.sentAt || Date.now()).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
                   </div>
 
-                  <div style={{
-                    padding: isEmojiOnly ? '0.2rem' : '0.625rem 0.95rem',
-                    borderRadius: isMe ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                    background: isEmojiOnly
-                      ? 'transparent'
-                      : isMe
-                      ? 'var(--color-snow-white)'
-                      : '#1e1e1e',
-                    border: isEmojiOnly
-                      ? 'none'
-                      : isMe
-                      ? '1px solid var(--color-snow-white)'
-                      : '1px solid var(--color-hairline)',
-                    color: isMe && !isEmojiOnly ? 'var(--color-graphite)' : 'var(--color-bone)',
-                    fontWeight: isMe && !isEmojiOnly ? 500 : 400,
-                    fontSize: isEmojiOnly ? '1.875rem' : '0.875rem',
-                    lineHeight: 1.45,
-                    wordBreak: 'break-word',
-                  }}>
+                  <div
+                    style={{
+                      padding: isGlyphOnly ? '0.2rem' : '0.625rem 0.95rem',
+                      borderRadius: isMe ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                      background: isGlyphOnly
+                        ? 'transparent'
+                        : isMe
+                        ? 'var(--w)'
+                        : 'var(--glass)',
+                      border: isGlyphOnly
+                        ? 'none'
+                        : isMe
+                        ? 'none'
+                        : '1px solid var(--line)',
+                      color: isMe && !isGlyphOnly ? 'var(--k)' : 'var(--w1)',
+                      fontWeight: isMe && !isGlyphOnly ? 500 : 400,
+                      fontSize: isGlyphOnly ? '1.75rem' : '0.875rem',
+                      lineHeight: 1.45,
+                      wordBreak: 'break-word',
+                    }}
+                  >
                     {msg.text}
                   </div>
                 </div>
@@ -272,70 +340,73 @@ export default function ChatBox({ roomId }) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick Reactions Bar */}
-      <div style={{
-        padding: '0.45rem 0.75rem',
-        background: '#131313',
-        borderTop: '1px solid var(--color-hairline)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.35rem',
-        overflowX: 'auto',
-      }}>
-        {QUICK_REACTIONS.map((emoji) => (
+      {/* Monochrome Quick Reactions Bar */}
+      <div
+        style={{
+          padding: '0.45rem 0.75rem',
+          background: 'var(--k2)',
+          borderTop: '1px solid var(--line)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '0.5rem',
+        }}
+      >
+        {MONO_REACTIONS.map((glyph) => (
           <button
-            key={emoji}
+            key={glyph}
             type="button"
-            onClick={() => sendQuickReaction(emoji)}
+            onClick={() => sendQuickReaction(glyph)}
             style={{
               background: 'transparent',
               border: 'none',
-              fontSize: '1.05rem',
+              fontSize: '1rem',
+              color: 'var(--w2)',
               cursor: 'pointer',
-              padding: '0.2rem 0.35rem',
+              padding: '0.2rem 0.45rem',
               borderRadius: 6,
+              transition: 'color 0.2s, transform 0.2s',
             }}
             title="Send reaction"
           >
-            {emoji}
+            {glyph}
           </button>
         ))}
       </div>
 
-      {/* Input Field with Enter-to-send */}
-      <form onSubmit={handleSend} style={{
-        padding: '0.75rem',
-        borderTop: '1px solid var(--color-hairline)',
-        display: 'flex',
-        gap: '0.5rem',
-        background: 'var(--color-graphite)',
-      }}>
+      {/* Input Field */}
+      <form
+        onSubmit={handleSend}
+        style={{
+          padding: '0.75rem',
+          borderTop: '1px solid var(--line)',
+          display: 'flex',
+          gap: '0.5rem',
+          background: 'var(--k1)',
+        }}
+      >
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Whisper a message (Enter to send)..."
+          placeholder="Whisper a message..."
           style={{
             flex: 1,
             padding: '0.625rem 0.95rem',
-            borderRadius: 'var(--radius-ui)',
-            background: '#1a1a1a',
-            border: '1px solid var(--color-hairline)',
-            color: 'var(--color-bone)',
+            borderRadius: 999,
+            background: 'var(--k2)',
+            border: '1px solid var(--line)',
+            color: 'var(--w)',
             fontSize: '0.875rem',
+            outline: 'none',
           }}
         />
         <button
           type="submit"
+          className="pill"
           style={{
-            padding: '0.625rem 1.15rem',
-            borderRadius: 'var(--radius-pill)',
-            background: 'var(--color-snow-white)',
-            color: 'var(--color-graphite)',
-            fontWeight: 500,
-            border: '1px solid var(--color-snow-white)',
+            padding: '8px 18px',
             fontSize: '0.8125rem',
-            cursor: 'pointer',
           }}
         >
           Send

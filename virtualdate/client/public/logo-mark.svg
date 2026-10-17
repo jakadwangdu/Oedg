@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" role="img" aria-label="Oedg">
+  <title>Oedg</title>
+  <!-- the room: an open ring, with a door of light at the top -->
+  <path d="M62.3 16.2A36 36 0 1 1 37.7 16.2" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  <!-- you (filled) and your partner (outlined), about to meet -->
+  <circle cx="40" cy="54" r="8" fill="#fff"/>
+  <circle cx="60" cy="54" r="6.5" stroke="#fff" stroke-width="3"/>
+</svg>

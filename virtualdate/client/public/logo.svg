@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 120" fill="none" role="img" aria-label="Oedg">
+  <title>Oedg</title>
+  <rect width="380" height="120" fill="#000"/>
+  <g transform="translate(10 10)">
+    <path d="M62.3 16.2A36 36 0 1 1 37.7 16.2" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="40" cy="54" r="8" fill="#fff"/>
+    <circle cx="60" cy="54" r="6.5" stroke="#fff" stroke-width="3"/>
+  </g>
+  <!-- wordmark drawn as strokes, no font needed -->
+  <g transform="translate(140 10)" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="24" cy="62" r="18"/>
+    <path d="M66 62H102A18 18 0 1 0 96.7 74.7"/>
+    <circle cx="144" cy="62" r="18"/><path d="M162 22V80"/>
+    <circle cx="204" cy="62" r="18"/><path d="M222 44V82C222 94 214 98 204 98C195 98 189 95 185 90"/>
+  </g>
+</svg>

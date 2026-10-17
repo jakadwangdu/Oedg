@@ -1,52 +1,109 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
+import gsap from 'gsap';
 
 const TABS = [
-  { id: 'movie', label: 'Cinema', icon: '🎬' },
-  { id: 'music', label: 'Dhun Music', icon: '🎵' },
-  { id: 'whiteboard', label: 'Canvas', icon: '🎨' },
-  { id: 'games', label: 'Games', icon: '🎮' },
-  { id: 'call', label: 'Video Call', icon: '📹' },
+  { id: 'movie', label: 'Watch' },
+  { id: 'music', label: 'Dhun' },
+  { id: 'whiteboard', label: 'Canvas' },
+  { id: 'games', label: 'Arcade' },
+  { id: 'call', label: 'Call' },
 ];
 
 export default function ActivityTabs({ currentActivity, onSelectActivity }) {
+  const tabsRef = useRef([]);
+  const indRef = useRef(null);
+
+  const activeIndex = Math.max(
+    0,
+    TABS.findIndex((t) => t.id === currentActivity)
+  );
+
+  const updateIndicator = (idx, animate = true) => {
+    const el = tabsRef.current[idx];
+    if (el && indRef.current) {
+      if (animate) {
+        gsap.to(indRef.current, {
+          x: el.offsetLeft,
+          width: el.offsetWidth,
+          duration: 0.6,
+          ease: 'expo.out',
+        });
+      } else {
+        gsap.set(indRef.current, {
+          x: el.offsetLeft,
+          width: el.offsetWidth,
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    updateIndicator(activeIndex, true);
+  }, [activeIndex]);
+
+  useEffect(() => {
+    // Initial mount without delay
+    updateIndicator(activeIndex, false);
+    const handleResize = () => updateIndicator(activeIndex, false);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <nav style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.25rem',
-      background: 'rgba(22, 22, 22, 0.85)',
-      backdropFilter: 'blur(8px)',
-      WebkitBackdropFilter: 'blur(8px)',
-      padding: '0.25rem 0.35rem',
-      borderRadius: 'var(--radius-pill)',
-      border: '1px solid var(--color-hairline)',
-      overflowX: 'auto',
-      maxWidth: '100%',
-    }}>
-      {TABS.map((tab) => {
-        const isActive = currentActivity === tab.id;
+    <nav
+      style={{
+        position: 'relative',
+        display: 'inline-flex',
+        alignItems: 'center',
+        background: 'var(--k3)',
+        padding: 4,
+        borderRadius: 999,
+        border: '1px solid var(--line)',
+        overflowX: 'auto',
+        maxWidth: '100%',
+      }}
+    >
+      {/* Sliding white pill indicator */}
+      <div
+        ref={indRef}
+        style={{
+          position: 'absolute',
+          top: 4,
+          bottom: 4,
+          left: 0,
+          borderRadius: 999,
+          background: 'var(--w)',
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
+
+      {TABS.map((tab, i) => {
+        const isActive = activeIndex === i;
         return (
           <button
             key={tab.id}
-            onClick={() => onSelectActivity(tab.id)}
+            ref={(el) => (tabsRef.current[i] = el)}
+            onClick={() => {
+              updateIndicator(i, true);
+              onSelectActivity(tab.id);
+            }}
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              padding: '0.45rem 1rem',
-              borderRadius: 'var(--radius-pill)',
-              background: isActive ? 'var(--color-snow-white)' : 'transparent',
-              border: isActive ? '1px solid var(--color-snow-white)' : '1px solid transparent',
-              color: isActive ? 'var(--color-graphite)' : 'var(--color-ash)',
-              fontSize: '0.8125rem',
+              position: 'relative',
+              zIndex: 2,
+              padding: '7px 18px',
+              borderRadius: 999,
+              fontSize: 13,
               fontWeight: 500,
+              color: isActive ? 'var(--k)' : 'var(--w3)',
+              transition: 'color 0.25s',
               cursor: 'pointer',
+              border: 'none',
+              background: 'transparent',
               whiteSpace: 'nowrap',
-              transition: 'all var(--transition-fast)',
             }}
           >
-            <span>{tab.icon}</span>
-            <span>{tab.label}</span>
+            {tab.label}
           </button>
         );
       })}

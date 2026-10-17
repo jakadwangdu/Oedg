@@ -617,92 +617,79 @@ export default function VideoGrid({ roomId }) {
           position: 'absolute',
           inset: 0,
           zIndex: 50,
-          background: 'rgba(10, 10, 10, 0.92)',
+          background: 'rgba(0, 0, 0, 0.92)',
           backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '1.5rem',
-          animation: 'fadeIn 200ms ease-out',
         }}>
           <div style={{
-            background: '#161616',
-            border: '1px solid var(--color-hairline)',
-            borderRadius: 'var(--radius-card)',
+            background: 'var(--k1)',
+            border: '1px solid var(--line)',
+            borderRadius: 24,
             padding: '2.5rem 2rem',
             maxWidth: 380,
             width: '100%',
             textAlign: 'center',
+            boxShadow: '0 40px 120px rgba(255, 255, 255, 0.05)',
           }}>
+            {/* Outlined Partner Avatar pulsing once per second */}
             <div style={{
               width: 80,
               height: 80,
               borderRadius: '50%',
-              margin: '0 auto 1.25rem',
-              background: incomingCall.fromAvatar ? `url(${incomingCall.fromAvatar}) center/cover` : '#222',
-              border: '2px solid var(--color-snow-white)',
+              margin: '0 auto 1.5rem',
+              background: incomingCall.fromAvatar ? `url(${incomingCall.fromAvatar}) center/cover` : 'transparent',
+              border: '2px solid var(--w)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: '1.75rem',
-              color: 'var(--color-bone)',
-              animation: 'spin 18s linear infinite',
+              color: 'var(--w)',
+              fontWeight: 500,
+              animation: 'pulseRing 1.5s cubic-bezier(0.16, 1, 0.3, 1) infinite',
             }}>
               {!incomingCall.fromAvatar && (incomingCall.fromUsername?.[0]?.toUpperCase() || 'P')}
             </div>
 
             <h3 style={{
-              fontFamily: 'var(--font-dm-sans)',
               fontSize: '1.35rem',
               fontWeight: 500,
-              color: 'var(--color-bone)',
-              marginBottom: '0.35rem',
-              letterSpacing: '-0.025em',
+              color: 'var(--w)',
+              marginBottom: '0.4rem',
+              letterSpacing: '-0.035em',
             }}>
               {incomingCall.fromUsername} is calling...
             </h3>
             <p style={{
               fontSize: '0.8125rem',
-              color: 'var(--color-ash)',
+              color: 'var(--w2)',
               marginBottom: '2rem',
             }}>
-              {incomingCall.isAudioOnly ? 'Incoming voice call 🎙️' : 'Incoming video call 📹'}
+              {incomingCall.isAudioOnly ? 'Incoming voice call' : 'Incoming video call'}
             </p>
 
             <div style={{ display: 'flex', gap: '0.85rem', justifyContent: 'center' }}>
               <button
                 onClick={answerIncomingCall}
+                className="pill"
                 style={{
                   flex: 1,
-                  padding: '0.75rem 1.25rem',
-                  borderRadius: 'var(--radius-pill)',
-                  background: 'var(--color-snow-white)',
-                  color: 'var(--color-graphite)',
-                  border: 'none',
+                  padding: '11px',
                   fontSize: '0.875rem',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.4rem',
                 }}
               >
-                <span>📹</span>
-                <span>Accept</span>
+                Accept
               </button>
               <button
                 onClick={rejectIncomingCall}
+                className="pill-ghost"
                 style={{
                   flex: 1,
-                  padding: '0.75rem 1.25rem',
-                  borderRadius: 'var(--radius-pill)',
-                  background: '#222',
-                  color: '#f87171',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  padding: '11px',
                   fontSize: '0.875rem',
-                  fontWeight: 500,
-                  cursor: 'pointer',
                 }}
               >
                 Decline

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { getSocket } from '../../services/socket';
+import gsap from 'gsap';
 
 const CASUAL_GAMES = [
   { name: 'Tic-Tac-Toe', type: 'builtin' },
-  { name: 'Skribbl.io (Pictionary)', url: 'https://skribbl.io', type: 'embed' },
+  { name: 'Skribbl.io', url: 'https://skribbl.io', type: 'embed' },
   { name: 'Gartic Phone', url: 'https://garticphone.com', type: 'embed' },
   { name: 'Smash Karts', url: 'https://smashkarts.io', type: 'embed' },
-  { name: 'Lichess (Chess)', url: 'https://lichess.org', type: 'embed' },
+  { name: 'Lichess', url: 'https://lichess.org', type: 'embed' },
 ];
 
 export default function GameRoom({ roomId }) {
@@ -50,6 +51,18 @@ export default function GameRoom({ roomId }) {
     if (tttState.board[index] || tttState.winner) return;
     const socket = getSocket();
     socket?.emit('ttt:move', { roomId, index });
+
+    // Animate mark pop-in with back.out(2)
+    setTimeout(() => {
+      const el = document.getElementById(`live-ttt-${index}`);
+      if (el) {
+        gsap.fromTo(
+          el,
+          { scale: 0, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.45, ease: 'back.out(2)' }
+        );
+      }
+    }, 10);
   };
 
   const handleTttReset = () => {
@@ -81,45 +94,50 @@ export default function GameRoom({ roomId }) {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      background: 'var(--color-graphite)',
-      borderRadius: 'var(--radius-card)', // 24px
-      border: '1px solid var(--color-hairline)',
-      overflow: 'hidden',
-    }}>
-      {/* Game Selector Toolbar */}
-      <div style={{
-        padding: '0.75rem 1.25rem',
-        borderBottom: '1px solid var(--color-hairline)',
+    <div
+      style={{
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '0.75rem',
-        background: 'rgba(22, 22, 22, 0.9)',
-      }}>
+        flexDirection: 'column',
+        height: '100%',
+        background: 'var(--k1)',
+        borderRadius: 24,
+        border: '1px solid var(--line)',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Game Selector Toolbar */}
+      <div
+        style={{
+          padding: '0.75rem 1.25rem',
+          borderBottom: '1px solid var(--line)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
+          background: 'var(--k2)',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <span style={{ fontSize: '1rem', color: 'var(--accent-violet)' }}>✦</span>
+          <span style={{ fontSize: '1rem', color: 'var(--w)' }}>✦</span>
           <div>
-            <div style={{
-              fontFamily: 'var(--font-dm-sans)',
-              fontWeight: 500,
-              fontSize: '0.9375rem',
-              color: 'var(--color-bone)',
-              letterSpacing: '-0.02em',
-            }}>
+            <div
+              style={{
+                fontWeight: 500,
+                fontSize: '0.9375rem',
+                color: 'var(--w)',
+                letterSpacing: '-0.02em',
+              }}
+            >
               Interactive Arcade
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--color-slate)' }}>
+            <div className="mono" style={{ fontSize: '0.725rem', color: 'var(--w3)' }}>
               Built-in strategy and embedded party games
             </div>
           </div>
         </div>
 
-        {/* Game Tabs: 9999px pills */}
+        {/* Game Tabs */}
         <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
           {CASUAL_GAMES.map((g) => {
             const isSelected = selectedGame.name === g.name;
@@ -129,14 +147,14 @@ export default function GameRoom({ roomId }) {
                 onClick={() => handleSelectGame(g)}
                 style={{
                   padding: '0.4rem 0.85rem',
-                  borderRadius: 'var(--radius-pill)',
-                  background: isSelected ? 'var(--color-snow-white)' : '#1a1a1a',
-                  border: isSelected ? '1px solid var(--color-snow-white)' : '1px solid var(--color-hairline)',
-                  color: isSelected ? 'var(--color-graphite)' : 'var(--color-ash)',
+                  borderRadius: 999,
+                  background: isSelected ? 'var(--w)' : 'transparent',
+                  border: isSelected ? '1px solid var(--w)' : '1px solid var(--line)',
+                  color: isSelected ? 'var(--k)' : 'var(--w2)',
                   fontSize: '0.75rem',
                   fontWeight: 500,
                   cursor: 'pointer',
-                  transition: 'all var(--transition-fast)',
+                  transition: 'all 0.2s',
                 }}
               >
                 {g.name}
@@ -153,10 +171,10 @@ export default function GameRoom({ roomId }) {
             placeholder="Embed web game URL..."
             style={{
               padding: '0.45rem 0.85rem',
-              borderRadius: 'var(--radius-ui)',
-              background: '#1a1a1a',
-              border: '1px solid var(--color-hairline)',
-              color: 'var(--color-bone)',
+              borderRadius: 999,
+              background: 'var(--k3)',
+              border: '1px solid var(--line)',
+              color: 'var(--w)',
               fontSize: '0.75rem',
               outline: 'none',
               width: 170,
@@ -164,15 +182,10 @@ export default function GameRoom({ roomId }) {
           />
           <button
             type="submit"
+            className="pill"
             style={{
-              padding: '0.45rem 0.95rem',
-              borderRadius: 'var(--radius-pill)',
-              background: 'var(--color-snow-white)',
-              color: 'var(--color-graphite)',
-              fontWeight: 500,
-              border: 'none',
+              padding: '6px 14px',
               fontSize: '0.75rem',
-              cursor: 'pointer',
             }}
           >
             Load
@@ -181,90 +194,114 @@ export default function GameRoom({ roomId }) {
       </div>
 
       {/* Game Content Area */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', background: '#0e0e0e' }}>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          background: '#000',
+        }}
+      >
         {selectedGame.type === 'builtin' ? (
-          /* Built-in Tic-Tac-Toe */
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            padding: '2.5rem',
-          }}>
-            <h3 style={{
-              fontFamily: 'var(--font-dm-sans)',
-              fontSize: '1.25rem',
-              fontWeight: 500,
-              marginBottom: '0.5rem',
-              color: 'var(--color-bone)',
-              letterSpacing: '-0.025em',
-            }}>
+          /* Built-in Tic-Tac-Toe with Glass Tiles & pop-in */
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              padding: '2.5rem',
+            }}
+          >
+            <div
+              className="mono"
+              style={{
+                fontSize: 12,
+                color: 'var(--w3)',
+                letterSpacing: '0.08em',
+                marginBottom: '0.5rem',
+              }}
+            >
+              TIC-TAC-TOE &middot; REAL-TIME SYNC
+            </div>
+
+            <div
+              style={{
+                fontSize: '1rem',
+                color: tttState.winner ? 'var(--w)' : 'var(--w2)',
+                marginBottom: '1.5rem',
+                fontWeight: 500,
+              }}
+            >
               {tttState.winner
                 ? tttState.winner === 'Draw'
-                  ? "It's a draw 🤝"
-                  : `Winner: ${tttState.winner} ✦`
-                : `Next turn: ${tttState.xIsNext ? 'X' : 'O'}`}
-            </h3>
+                  ? 'Game ended in a quiet draw.'
+                  : `${tttState.winner === 'X' ? 'Player X (Solid)' : 'Player O (Outlined)'} wins! ✦`
+                : `Current Turn: ${tttState.xIsNext ? 'X (Solid White)' : 'O (Outlined White)'}`}
+            </div>
 
-            {/* 3x3 Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 90px)',
-              gridTemplateRows: 'repeat(3, 90px)',
-              gap: '8px',
-              background: '#161616',
-              border: '1px solid var(--color-hairline)',
-              padding: '8px',
-              borderRadius: 'var(--radius-card)',
-              margin: '1.5rem 0',
-            }}>
-              {tttState.board.map((cell, idx) => (
+            {/* Board with Glass Tiles */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 90px)',
+                gridTemplateRows: 'repeat(3, 90px)',
+                gap: 12,
+              }}
+            >
+              {tttState.board.map((cell, index) => (
                 <button
-                  key={idx}
-                  onClick={() => handleTttClick(idx)}
+                  key={index}
+                  onClick={() => handleTttClick(index)}
+                  disabled={!!cell || !!tttState.winner}
                   style={{
-                    background: '#1f1f1f',
-                    border: '1px solid var(--color-hairline-subtle)',
-                    borderRadius: 'var(--radius-ui)',
-                    fontSize: '1.75rem',
-                    fontWeight: 500,
-                    color: cell === 'X' ? 'var(--color-snow-white)' : 'var(--accent-violet)',
-                    cursor: cell || tttState.winner ? 'default' : 'pointer',
+                    background: 'var(--glass)',
+                    border: '1px solid var(--line)',
+                    borderRadius: 16,
+                    fontSize: '2rem',
+                    fontWeight: 600,
+                    color: 'var(--w)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontFamily: 'var(--font-dm-sans)',
-                    transition: 'background var(--transition-fast)',
+                    cursor: cell || tttState.winner ? 'default' : 'pointer',
+                    transition: 'border-color 0.2s',
                   }}
                 >
-                  {cell}
+                  {cell && (
+                    <span id={`live-ttt-${index}`} style={{ display: 'inline-block' }}>
+                      {cell === 'X' ? (
+                        <span style={{ color: '#fff' }}>✕</span>
+                      ) : (
+                        <span style={{ color: '#a8a8a8' }}>◯</span>
+                      )}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
 
             <button
               onClick={handleTttReset}
-              className="btn-dimension-secondary"
+              className="pill-ghost"
               style={{
-                padding: '0.5rem 1.4rem',
+                marginTop: '1.75rem',
+                padding: '8px 20px',
                 fontSize: '0.8125rem',
-                marginTop: '0.5rem',
               }}
             >
-              Restart Game
+              Reset board
             </button>
           </div>
         ) : (
-          /* Embedded Web Game iframe */
+          /* Embedded Web Game Iframe */
           <iframe
-            src={gameUrl || selectedGame.url}
+            src={gameUrl}
             title={selectedGame.name}
+            allow="fullscreen; gamepad; autoplay"
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-            style={{
-              width: '100%',
-              height: '100%',
-              border: 'none',
-              background: '#0a0a0a',
-            }}
+            style={{ width: '100%', height: '100%', border: 'none' }}
           />
         )}
       </div>

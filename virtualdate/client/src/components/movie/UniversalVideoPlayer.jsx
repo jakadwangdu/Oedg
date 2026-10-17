@@ -60,7 +60,7 @@ export default function UniversalVideoPlayer({ roomId }) {
       }
 
       if (data.updatedBy) {
-        setPartnerNotice(`${data.updatedBy} synced the cinema 🎬`);
+        setPartnerNotice(`${data.updatedBy} synced the cinema ✦`);
         setTimeout(() => setPartnerNotice(''), 3000);
       }
 
@@ -99,19 +99,16 @@ export default function UniversalVideoPlayer({ roomId }) {
     setMovieState({ url: cleanUrl, type: detected });
 
     const socket = getSocket();
-    socket?.emit('movie:load', { roomId, url: cleanUrl, type: detected });
+    socket?.emit('movie:load', {
+      roomId,
+      url: cleanUrl,
+      type: detected,
+    });
+
     setUrlInput('');
   };
 
-  const loadPreset = (url, name) => {
-    const detected = detectType(url);
-    setCurrentUrl(url);
-    setVideoType(detected);
-    setMovieState({ url, type: detected });
-    const socket = getSocket();
-    socket?.emit('movie:load', { roomId, url, type: detected });
-  };
-
+  // Direct HTML5 event handlers
   const onDirectPlay = () => {
     if (isSyncingRef.current) return;
     const socket = getSocket();
@@ -140,61 +137,67 @@ export default function UniversalVideoPlayer({ roomId }) {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      background: 'var(--color-graphite)',
-      borderRadius: 'var(--radius-card)', // 24px
-      border: '1px solid var(--color-hairline)',
-      overflow: 'hidden',
-      position: 'relative',
-    }}>
-      {/* Dimension Header Bar */}
-      <div style={{
-        padding: '0.75rem 1.25rem',
-        borderBottom: '1px solid var(--color-hairline)',
+    <div
+      style={{
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '0.75rem',
-        background: 'rgba(22, 22, 22, 0.9)',
-      }}>
+        flexDirection: 'column',
+        height: '100%',
+        background: 'var(--k1)',
+        borderRadius: 24,
+        border: '1px solid var(--line)',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      {/* Top Controls Bar */}
+      <div
+        style={{
+          padding: '0.75rem 1.25rem',
+          borderBottom: '1px solid var(--line)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
+          background: 'var(--k2)',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <span style={{ fontSize: '1rem', color: 'var(--accent-violet)' }}>✦</span>
+          <span style={{ fontSize: '1rem', color: 'var(--w)' }}>✦</span>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{
-                fontFamily: 'var(--font-dm-sans)',
-                fontWeight: 500,
-                fontSize: '0.9375rem',
-                color: 'var(--color-bone)',
-                letterSpacing: '-0.02em',
-              }}>
-                Universal Cinema
+              <span
+                style={{
+                  fontWeight: 500,
+                  fontSize: '0.9375rem',
+                  color: 'var(--w)',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                Universal Cinema Sync
               </span>
-              <span style={{
-                fontSize: '0.6875rem',
-                padding: '0.15rem 0.6rem',
-                borderRadius: 'var(--radius-pill)',
-                background: '#1a1a1a',
-                border: '1px solid var(--color-hairline)',
-                color: 'var(--color-ash)',
-                fontWeight: 500,
-                fontFamily: 'var(--font-mono)',
-              }}>
-                {videoType === 'youtube' ? 'YouTube' : videoType === 'direct' ? 'MP4/WebM' : 'Stream'}
+              <span
+                className="mono"
+                style={{
+                  fontSize: '0.6875rem',
+                  padding: '0.15rem 0.55rem',
+                  borderRadius: 999,
+                  background: 'var(--k3)',
+                  border: '1px solid var(--line)',
+                  color: 'var(--w2)',
+                }}
+              >
+                Synced
               </span>
             </div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-slate)' }}>
-              Paste YouTube or MP4/WebM video link to stream in real-time sync
+            <span style={{ fontSize: '0.75rem', color: 'var(--w3)' }}>
+              Sub-second video timeline synchronization across viewports
             </span>
           </div>
         </div>
 
-        {/* Video URL Input Bar */}
-        <form onSubmit={handleLoad} style={{ display: 'flex', gap: '0.5rem', flex: 1, maxWidth: 440 }}>
+        {/* Load URL Form */}
+        <form onSubmit={handleLoad} style={{ display: 'flex', gap: '0.5rem', flex: 1, maxWidth: 460 }}>
           <input
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
@@ -202,25 +205,20 @@ export default function UniversalVideoPlayer({ roomId }) {
             style={{
               flex: 1,
               padding: '0.55rem 0.95rem',
-              borderRadius: 'var(--radius-ui)',
-              background: '#1a1a1a',
-              border: '1px solid var(--color-hairline)',
-              color: 'var(--color-bone)',
+              borderRadius: 999,
+              background: 'var(--k3)',
+              border: '1px solid var(--line)',
+              color: 'var(--w)',
               fontSize: '0.8125rem',
               outline: 'none',
             }}
           />
           <button
             type="submit"
+            className="pill"
             style={{
-              padding: '0.55rem 1.15rem',
-              borderRadius: 'var(--radius-pill)',
-              background: 'var(--color-snow-white)',
-              color: 'var(--color-graphite)',
-              fontWeight: 500,
-              border: '1px solid var(--color-snow-white)',
+              padding: '8px 18px',
               fontSize: '0.8125rem',
-              cursor: 'pointer',
               whiteSpace: 'nowrap',
             }}
           >
@@ -231,36 +229,38 @@ export default function UniversalVideoPlayer({ roomId }) {
 
       {/* Partner Action Toast */}
       {partnerNotice && (
-        <div style={{
-          position: 'absolute',
-          top: 64,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 30,
-          background: 'rgba(22, 22, 22, 0.95)',
-          border: '1px solid var(--color-hairline)',
-          backdropFilter: 'blur(8px)',
-          color: 'var(--color-bone)',
-          padding: '0.4rem 1.1rem',
-          borderRadius: 'var(--radius-pill)',
-          fontSize: '0.8125rem',
-          fontWeight: 500,
-          animation: 'fadeIn 180ms ease-out',
-        }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: 64,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 30,
+            background: 'var(--k1)',
+            border: '1px solid var(--line)',
+            color: 'var(--w)',
+            padding: '0.4rem 1.1rem',
+            borderRadius: 999,
+            fontSize: '0.8125rem',
+            fontWeight: 500,
+          }}
+        >
           {partnerNotice}
         </div>
       )}
 
-      {/* Main Video Viewport */}
-      <div style={{
-        flex: 1,
-        position: 'relative',
-        background: '#0a0a0a',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-      }}>
+      {/* Main Video Viewport: 20px radius frame, black canvas */}
+      <div
+        style={{
+          flex: 1,
+          position: 'relative',
+          background: '#000000',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+        }}
+      >
         {videoType === 'youtube' ? (
           <iframe
             key={currentUrl}
@@ -288,7 +288,7 @@ export default function UniversalVideoPlayer({ roomId }) {
               width: '100%',
               height: '100%',
               objectFit: 'contain',
-              background: '#0a0a0a',
+              background: '#000000',
             }}
           />
         ) : (
@@ -307,63 +307,50 @@ export default function UniversalVideoPlayer({ roomId }) {
         )}
       </div>
 
-      {/* Dimension Presets Bar */}
-      <div style={{
-        padding: '0.65rem 1.25rem',
-        background: 'var(--color-graphite)',
-        borderTop: '1px solid var(--color-hairline)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '0.6rem',
-        fontSize: '0.8125rem',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <span style={{ color: 'var(--color-slate)', fontSize: '0.75rem', fontWeight: 400 }}>
-            Curated Streams:
-          </span>
-          <button
-            onClick={() => loadPreset('https://www.youtube.com/watch?v=TURbeWK2wwg', 'Rain & Piano')}
-            style={presetBtnStyle}
-          >
-            🌧️ Rain & Fireplace
-          </button>
-          <button
-            onClick={() => loadPreset('https://www.youtube.com/watch?v=jfKfPfyJRdk', 'Lofi Cafe')}
-            style={presetBtnStyle}
-          >
-            ☕ Lofi Cafe
-          </button>
-          <button
-            onClick={() => loadPreset('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', 'Big Buck Bunny (MP4)')}
-            style={presetBtnStyle}
-          >
-            🎬 Big Buck Bunny (MP4)
-          </button>
-          <button
-            onClick={() => loadPreset('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', 'Elephants Dream (MP4)')}
-            style={presetBtnStyle}
-          >
-            🐘 Elephant's Dream (MP4)
-          </button>
-        </div>
-
-        <span style={{ color: 'var(--color-slate)', fontSize: '0.75rem', fontFamily: 'var(--font-mono)' }}>
-          ✦ Synchronized playback active
+      {/* Preset Suggestions Bar */}
+      <div
+        style={{
+          padding: '0.65rem 1.25rem',
+          background: 'var(--k1)',
+          borderTop: '1px solid var(--line)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.6rem',
+        }}
+      >
+        <span className="mono" style={{ fontSize: '0.75rem', color: 'var(--w3)' }}>
+          Curated streams:
         </span>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {[
+            { label: 'Lofi Girl Live', url: 'https://www.youtube.com/watch?v=jfKfPfyJRdk' },
+            { label: 'Rainy Night In Tokyo', url: 'https://www.youtube.com/watch?v=5qap5aO4i9A' },
+            { label: 'Big Buck Bunny (Direct HD)', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+          ].map((item) => (
+            <button
+              key={item.label}
+              onClick={() => {
+                setUrlInput(item.url);
+                setCurrentUrl(item.url);
+                const detected = detectType(item.url);
+                setVideoType(detected);
+                setMovieState({ url: item.url, type: detected });
+                const socket = getSocket();
+                socket?.emit('movie:load', { roomId, url: item.url, type: detected });
+              }}
+              className="pill-ghost"
+              style={{
+                padding: '4px 12px',
+                fontSize: '0.75rem',
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
-
-const presetBtnStyle = {
-  background: '#1a1a1a',
-  border: '1px solid var(--color-hairline)',
-  color: 'var(--color-ash)',
-  padding: '0.35rem 0.8rem',
-  borderRadius: 'var(--radius-pill)',
-  fontSize: '0.75rem',
-  cursor: 'pointer',
-  transition: 'border-color var(--transition-fast), color var(--transition-fast)',
-};

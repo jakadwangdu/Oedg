@@ -8,28 +8,24 @@ const ROMANTIC_TRACKS = [
     title: 'Midnight Candlelight Lofi',
     artist: 'VirtualDate Sanctuary',
     url: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3',
-    cover: '🕯️',
   },
   {
     id: 'lofi-2',
-    title: 'Rain on the Window Glass',
+    title: 'Rain on Window Glass',
     artist: 'Cozy Raindrops',
     url: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=rain-and-nostalgia-chill-lofi-song-8193.mp3',
-    cover: '🌧️',
   },
   {
     id: 'piano-1',
     title: 'Starlight Romance Piano',
     artist: 'Moonlit Melody',
     url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=relaxed-vlog-131746.mp3',
-    cover: '✨',
   },
   {
     id: 'cafe-1',
     title: 'Parisian Velvet Evening',
     artist: 'Champs-Élysées Whisper',
     url: 'https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939f792cb.mp3?filename=lofi-chill-medium-version-12099.mp3',
-    cover: '🍷',
   },
 ];
 
@@ -64,13 +60,12 @@ export default function MusicPlayer({ roomId }) {
             title: data.title || 'Partner Shared Audio',
             artist: data.artist || 'Web Stream',
             url: data.url,
-            cover: '🎵',
           });
         }
       }
 
       if (data.updatedBy) {
-        setDjNotice(`${data.updatedBy} synced the music 🎵`);
+        setDjNotice(`${data.updatedBy} synced the music ✦`);
         setTimeout(() => setDjNotice(''), 3000);
       }
 
@@ -123,6 +118,16 @@ export default function MusicPlayer({ roomId }) {
     }
   };
 
+  const handleSeek = (e) => {
+    const time = parseFloat(e.target.value);
+    setCurrentTime(time);
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+    }
+    const socket = getSocket();
+    socket?.emit('music:seek', { roomId, currentTime: time });
+  };
+
   const selectTrack = (track) => {
     setCurrentTrack(track);
     setIsPlaying(true);
@@ -132,231 +137,238 @@ export default function MusicPlayer({ roomId }) {
       url: track.url,
       title: track.title,
       artist: track.artist,
-      cover: track.cover,
     });
-  };
-
-  const handleSeek = (e) => {
-    const newTime = parseFloat(e.target.value);
-    setCurrentTime(newTime);
     if (audioRef.current) {
-      audioRef.current.currentTime = newTime;
+      audioRef.current.src = track.url;
+      audioRef.current.play().catch(() => {});
     }
-    const socket = getSocket();
-    socket?.emit('music:seek', { roomId, currentTime: newTime });
   };
 
-  const handleCustomAudio = (e) => {
-    e?.preventDefault();
+  const handleLoadCustom = (e) => {
+    e.preventDefault();
     if (!customUrl.trim()) return;
-    const track = {
+
+    const customTrack = {
       id: 'custom-' + Date.now(),
-      title: 'Custom Audio Stream',
-      artist: 'Shared Link',
+      title: 'Direct Stream Track',
+      artist: 'Custom Stream URL',
       url: customUrl.trim(),
-      cover: '📻',
     };
-    selectTrack(track);
+
+    selectTrack(customTrack);
     setCustomUrl('');
   };
 
-  const formatSec = (sec) => {
-    if (!sec || isNaN(sec)) return '0:00';
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
+  const formatSec = (s) => {
+    if (isNaN(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec < 10 ? '0' : ''}${sec}`;
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      background: 'var(--color-graphite)',
-      borderRadius: 'var(--radius-card)', // 24px
-      border: '1px solid var(--color-hairline)',
-      overflow: 'hidden',
-      position: 'relative',
-    }}>
-      {/* Hidden audio element */}
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        background: 'var(--k1)',
+        borderRadius: 24,
+        border: '1px solid var(--line)',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
       <audio
         ref={audioRef}
         src={currentTrack?.url}
         onTimeUpdate={onTimeUpdate}
         onEnded={() => setIsPlaying(false)}
-        preload="auto"
+        preload="metadata"
       />
 
-      {/* Header with Dimension Mode Switcher */}
-      <div style={{
-        padding: '0.75rem 1.25rem',
-        borderBottom: '1px solid var(--color-hairline)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '0.75rem',
-        background: 'rgba(22, 22, 22, 0.9)',
-      }}>
+      {/* Header Bar */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '1rem 1.25rem',
+          borderBottom: '1px solid var(--line)',
+          background: 'var(--k2)',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <span style={{ fontSize: '1rem', color: 'var(--accent-violet)' }}>✦</span>
+          <span style={{ fontSize: '1rem', color: 'var(--w)' }}>✦</span>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{
-                fontFamily: 'var(--font-dm-sans)',
-                fontWeight: 500,
-                fontSize: '0.9375rem',
-                color: 'var(--color-bone)',
-                letterSpacing: '-0.02em',
-              }}>
-                Acoustic Lounge
+              <span
+                style={{
+                  fontWeight: 500,
+                  fontSize: '0.9375rem',
+                  color: 'var(--w)',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                Dhun Player
               </span>
-              <span style={{
-                fontSize: '0.6875rem',
-                padding: '0.15rem 0.6rem',
-                borderRadius: 'var(--radius-pill)',
-                background: '#1a1a1a',
-                border: '1px solid var(--color-hairline)',
-                color: 'var(--color-ash)',
-                fontWeight: 500,
-                fontFamily: 'var(--font-mono)',
-              }}>
+              <span
+                className="mono"
+                style={{
+                  fontSize: '0.6875rem',
+                  padding: '0.15rem 0.6rem',
+                  borderRadius: 999,
+                  background: 'var(--k3)',
+                  border: '1px solid var(--line)',
+                  color: 'var(--w2)',
+                }}
+              >
                 2-Way Sync
               </span>
             </div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-slate)' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--w3)' }}>
               Shared audio playback across connected devices
             </span>
           </div>
         </div>
 
-        {/* Dimension Pill Mode Switcher */}
-        <div style={{
-          display: 'flex',
-          background: '#141414',
-          padding: '0.25rem',
-          borderRadius: 'var(--radius-pill)',
-          border: '1px solid var(--color-hairline)',
-          gap: '0.25rem',
-        }}>
+        {/* Mode Switcher */}
+        <div
+          style={{
+            display: 'flex',
+            background: 'var(--k3)',
+            padding: 3,
+            borderRadius: 999,
+            border: '1px solid var(--line)',
+            gap: 2,
+          }}
+        >
           <button
             onClick={() => setActiveMode('sync')}
             style={{
               padding: '0.4rem 0.95rem',
-              borderRadius: 'var(--radius-pill)',
-              border: activeMode === 'sync' ? '1px solid var(--color-snow-white)' : '1px solid transparent',
-              background: activeMode === 'sync' ? 'var(--color-snow-white)' : 'transparent',
-              color: activeMode === 'sync' ? 'var(--color-graphite)' : 'var(--color-ash)',
+              borderRadius: 999,
+              background: activeMode === 'sync' ? 'var(--w)' : 'transparent',
+              color: activeMode === 'sync' ? 'var(--k)' : 'var(--w3)',
               fontSize: '0.75rem',
               fontWeight: 500,
               cursor: 'pointer',
-              transition: 'all var(--transition-fast)',
+              border: 'none',
+              transition: 'all 0.2s',
             }}
           >
-            Synced Audio 🎧
+            Synced Audio
           </button>
           <button
             onClick={() => setActiveMode('dhun')}
             style={{
               padding: '0.4rem 0.95rem',
-              borderRadius: 'var(--radius-pill)',
-              border: activeMode === 'dhun' ? '1px solid var(--color-snow-white)' : '1px solid transparent',
-              background: activeMode === 'dhun' ? 'var(--color-snow-white)' : 'transparent',
-              color: activeMode === 'dhun' ? 'var(--color-graphite)' : 'var(--color-ash)',
+              borderRadius: 999,
+              background: activeMode === 'dhun' ? 'var(--w)' : 'transparent',
+              color: activeMode === 'dhun' ? 'var(--k)' : 'var(--w3)',
               fontSize: '0.75rem',
               fontWeight: 500,
               cursor: 'pointer',
-              transition: 'all var(--transition-fast)',
+              border: 'none',
+              transition: 'all 0.2s',
             }}
           >
-            Dhun Player (lancebuddy.in) 🌐
+            Dhun Web (lancebuddy.in)
           </button>
         </div>
       </div>
 
       {/* Partner Notice Toast */}
       {djNotice && (
-        <div style={{
-          position: 'absolute',
-          top: 64,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 30,
-          background: 'rgba(22, 22, 22, 0.95)',
-          border: '1px solid var(--color-hairline)',
-          backdropFilter: 'blur(8px)',
-          color: 'var(--color-bone)',
-          padding: '0.4rem 1.1rem',
-          borderRadius: 'var(--radius-pill)',
-          fontSize: '0.8125rem',
-          fontWeight: 500,
-          animation: 'fadeIn 180ms ease-out',
-        }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: 64,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 30,
+            background: 'var(--k1)',
+            border: '1px solid var(--line)',
+            color: 'var(--w)',
+            padding: '0.4rem 1.1rem',
+            borderRadius: 999,
+            fontSize: '0.8125rem',
+            fontWeight: 500,
+          }}
+        >
           {djNotice}
         </div>
       )}
 
       {/* Synchronized Mode View */}
       {activeMode === 'sync' ? (
-        <div style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '1.5rem',
-          gap: '1.5rem',
-          overflowY: 'auto',
-        }}>
-          {/* Main Visual Player Card */}
-          <div style={{
-            background: '#121212',
-            border: '1px solid var(--color-hairline)',
-            borderRadius: 'var(--radius-card)', // 24px
-            padding: '2rem 1.5rem',
+        <div
+          style={{
+            flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-            position: 'relative',
-          }}>
-            {/* Minimalist Spinning Artwork Circle */}
-            <div style={{
-              width: 96,
-              height: 96,
-              borderRadius: '50%',
-              background: '#1a1a1a',
-              border: '1px solid var(--color-hairline)',
+            padding: '1.5rem',
+            gap: '1.5rem',
+            overflowY: 'auto',
+          }}
+        >
+          {/* Main Visual Player Card */}
+          <div
+            style={{
+              background: 'var(--k2)',
+              border: '1px solid var(--line)',
+              borderRadius: 24,
+              padding: '2.5rem 1.5rem',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '2.5rem',
-              marginBottom: '1.25rem',
-              animation: isPlaying ? 'spin 14s linear infinite' : 'none',
-            }}>
-              {currentTrack?.cover || '🎵'}
+              textAlign: 'center',
+              position: 'relative',
+            }}
+          >
+            {/* Spinning Grey Vinyl from Section 8 */}
+            <div
+              className={`vinyl ${isPlaying ? '' : 'paused'}`}
+              style={{ margin: '0 auto 1.5rem' }}
+            >
+              <i />
             </div>
 
-            <h3 style={{
-              fontFamily: 'var(--font-dm-sans)',
-              fontSize: '1.25rem',
-              fontWeight: 500,
-              color: 'var(--color-bone)',
-              letterSpacing: '-0.025em',
-              marginBottom: '0.25rem',
-            }}>
+            <h3
+              style={{
+                fontSize: '1.35rem',
+                fontWeight: 500,
+                color: 'var(--w)',
+                letterSpacing: '-0.035em',
+                marginBottom: '0.35rem',
+              }}
+            >
               {currentTrack?.title}
             </h3>
-            <p style={{
-              fontFamily: 'var(--font-geist)',
-              fontSize: '0.875rem',
-              color: 'var(--color-ash)',
-              marginBottom: '1.5rem',
-            }}>
+            <p
+              style={{
+                fontSize: '0.875rem',
+                color: 'var(--w3)',
+                marginBottom: '1.5rem',
+              }}
+            >
               {currentTrack?.artist}
             </p>
 
             {/* Scrubber */}
-            <div style={{ width: '100%', maxWidth: 380, display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--color-slate)', minWidth: 35, fontFamily: 'var(--font-mono)' }}>
+            <div
+              style={{
+                width: '100%',
+                maxWidth: 420,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                marginBottom: '1.5rem',
+              }}
+            >
+              <span className="mono" style={{ fontSize: '0.75rem', color: 'var(--w3)', minWidth: 35 }}>
                 {formatSec(currentTime)}
               </span>
               <input
@@ -367,31 +379,31 @@ export default function MusicPlayer({ roomId }) {
                 onChange={handleSeek}
                 style={{
                   flex: 1,
-                  accentColor: 'var(--color-snow-white)',
+                  accentColor: 'var(--w)',
                   cursor: 'pointer',
                 }}
               />
-              <span style={{ fontSize: '0.75rem', color: 'var(--color-slate)', minWidth: 35, fontFamily: 'var(--font-mono)' }}>
+              <span className="mono" style={{ fontSize: '0.75rem', color: 'var(--w3)', minWidth: 35 }}>
                 {formatSec(duration)}
               </span>
             </div>
 
-            {/* Play/Pause Button: Snow White pill button */}
+            {/* Play/Pause Button: Solid white round pill */}
             <button
               onClick={togglePlay}
               style={{
-                width: 52,
-                height: 52,
+                width: 56,
+                height: 56,
                 borderRadius: '50%',
-                background: 'var(--color-snow-white)',
-                color: 'var(--color-graphite)',
+                background: 'var(--w)',
+                color: 'var(--k)',
                 border: 'none',
                 fontSize: '1.35rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
-                transition: 'transform var(--transition-fast)',
+                transition: 'transform 0.2s',
               }}
             >
               {isPlaying ? '⏸' : '▶'}
@@ -400,20 +412,16 @@ export default function MusicPlayer({ roomId }) {
 
           {/* Preset Tracks Grid */}
           <div>
-            <h4 style={{
-              fontFamily: 'var(--font-dm-sans)',
-              fontSize: '0.875rem',
-              color: 'var(--color-slate)',
-              marginBottom: '0.75rem',
-              fontWeight: 500,
-            }}>
-              Curated Workspace Tracks:
-            </h4>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-              gap: '0.75rem',
-            }}>
+            <div className="mono" style={{ fontSize: 12, color: 'var(--w3)', marginBottom: '0.75rem' }}>
+              DHUN STATIONS
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                gap: '0.75rem',
+              }}
+            >
               {ROMANTIC_TRACKS.map((t) => {
                 const isSelected = currentTrack?.id === t.id;
                 return (
@@ -423,31 +431,49 @@ export default function MusicPlayer({ roomId }) {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
+                      justifyContent: 'space-between',
                       gap: '0.75rem',
-                      padding: '0.75rem 1rem',
-                      borderRadius: 'var(--radius-card)',
-                      background: isSelected ? '#1c1c1c' : '#141414',
-                      border: `1px solid ${isSelected ? 'var(--color-hairline-strong)' : 'var(--color-hairline)'}`,
+                      padding: '0.85rem 1.15rem',
+                      borderRadius: 16,
+                      background: isSelected ? 'var(--glass)' : 'transparent',
+                      border: `1px solid ${isSelected ? 'var(--w)' : 'var(--line)'}`,
                       cursor: 'pointer',
-                      transition: 'border-color var(--transition-fast)',
+                      transition: 'border-color 0.2s',
                     }}
                   >
-                    <span style={{ fontSize: '1.25rem' }}>{t.cover}</span>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{
-                        fontSize: '0.8125rem',
-                        fontWeight: 500,
-                        color: isSelected ? 'var(--color-bone)' : 'var(--color-ash)',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}>
+                      <div
+                        style={{
+                          fontSize: '0.875rem',
+                          fontWeight: 500,
+                          color: isSelected ? 'var(--w)' : 'var(--w2)',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
                         {t.title}
                       </div>
-                      <div style={{ fontSize: '0.725rem', color: 'var(--color-slate)' }}>{t.artist}</div>
+                      <div className="mono" style={{ fontSize: '0.725rem', color: 'var(--w3)' }}>
+                        {t.artist}
+                      </div>
                     </div>
+
+                    {/* Animated Equaliser Bars */}
                     {isSelected && isPlaying && (
-                      <span style={{ fontSize: '0.75rem', color: 'var(--accent-violet)' }}>▶</span>
+                      <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end', height: 14 }}>
+                        {[8, 14, 10, 16].map((h, i) => (
+                          <span
+                            key={i}
+                            style={{
+                              width: 2,
+                              height: h,
+                              background: 'var(--w)',
+                              borderRadius: 1,
+                            }}
+                          />
+                        ))}
+                      </div>
                     )}
                   </div>
                 );
@@ -455,49 +481,36 @@ export default function MusicPlayer({ roomId }) {
             </div>
           </div>
 
-          {/* Custom Audio URL Input */}
-          <form onSubmit={handleCustomAudio} style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto' }}>
+          {/* Custom Stream URL input */}
+          <form onSubmit={handleLoadCustom} style={{ display: 'flex', gap: '0.65rem' }}>
             <input
               value={customUrl}
               onChange={(e) => setCustomUrl(e.target.value)}
-              placeholder="Paste direct audio MP3 stream link..."
+              placeholder="Paste direct audio stream URL (.mp3, .aac, radio stream)..."
               style={{
                 flex: 1,
-                padding: '0.625rem 0.95rem',
-                borderRadius: 'var(--radius-ui)',
-                background: '#1a1a1a',
-                border: '1px solid var(--color-hairline)',
-                color: 'var(--color-bone)',
+                padding: '0.65rem 1rem',
+                borderRadius: 999,
+                background: 'var(--k2)',
+                border: '1px solid var(--line)',
+                color: 'var(--w)',
                 fontSize: '0.8125rem',
                 outline: 'none',
               }}
             />
-            <button
-              type="submit"
-              style={{
-                padding: '0.625rem 1.25rem',
-                borderRadius: 'var(--radius-pill)',
-                background: 'var(--color-snow-white)',
-                color: 'var(--color-graphite)',
-                fontWeight: 500,
-                border: '1px solid var(--color-snow-white)',
-                fontSize: '0.8125rem',
-                cursor: 'pointer',
-              }}
-            >
-              Play
+            <button type="submit" className="pill" style={{ padding: '8px 18px', fontSize: 13 }}>
+              Sync Stream
             </button>
           </form>
         </div>
       ) : (
-        /* Dhun Music Player IFrame */
-        <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%', background: '#0a0a0a' }}>
+        /* Dhun Embed Frame */
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <iframe
             src="https://music.lancebuddy.in"
             title="Dhun Music Player"
-            style={{ width: '100%', height: '100%', border: 'none' }}
             allow="autoplay; encrypted-media; fullscreen"
-            loading="lazy"
+            style={{ width: '100%', height: '100%', border: 'none' }}
           />
         </div>
       )}

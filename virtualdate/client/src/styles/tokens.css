@@ -1,0 +1,180 @@
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+
+:root {
+  --k: #000;
+  --k1: #0a0a0a;
+  --k2: #141414;
+  --k3: #1f1f1f;
+  --w: #fff;
+  --w1: #ededed;
+  --w2: #a8a8a8;
+  --w3: #6a6a6a;
+  --line: rgba(255, 255, 255, 0.1);
+  --glass: rgba(255, 255, 255, 0.06);
+  --font: "Geist Variable", system-ui, sans-serif;
+  --mono: "Geist Mono Variable", ui-monospace, monospace;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  color-scheme: dark;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html.lenis {
+  height: auto;
+}
+
+body {
+  margin: 0;
+  background: var(--k);
+  color: var(--w1);
+  font: 400 17px/1.55 var(--font);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 {
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--w);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--w2);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--w);
+  color: var(--k);
+  border-radius: 999px;
+  padding: 13px 26px;
+  font-weight: 500;
+  transition: box-shadow 0.4s, transform 0.2s;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.pill:hover {
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.14), 0 0 60px rgba(255, 255, 255, 0.35);
+}
+
+.pill-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--w1);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 12px 24px;
+  font-weight: 500;
+  transition: background 0.2s, border-color 0.2s;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pill-ghost:hover {
+  background: var(--glass);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+}
+
+/* film grain over the whole app */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Vinyl animation for Dhun */
+.vinyl {
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  position: relative;
+  border: 1px solid var(--line);
+  background: repeating-radial-gradient(circle, #050505 0 2px, #171717 3px 4px);
+  animation: spin 7s linear infinite;
+}
+
+.vinyl::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(rgba(255, 255, 255, 0.2), transparent 18%, rgba(255, 255, 255, 0.14) 50%, transparent 68%, rgba(255, 255, 255, 0.2));
+}
+
+.vinyl i {
+  position: absolute;
+  inset: 36%;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 20px #e4e4e4;
+}
+
+.vinyl i::after {
+  content: "";
+  position: absolute;
+  inset: 40%;
+  border-radius: 50%;
+  background: #000;
+}
+
+.vinyl.paused {
+  animation-play-state: paused;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ring {
+  0% { transform: scale(0.2); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+  70% { box-shadow: 0 0 0 16px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}

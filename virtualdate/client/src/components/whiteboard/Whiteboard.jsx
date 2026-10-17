@@ -1,20 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getSocket } from '../../services/socket';
 
-const PALETTE = [
-  { color: '#ededed', label: 'Bone White' },
-  { color: '#6b62f2', label: 'Dusk Violet' },
-  { color: '#f59e0b', label: 'Warm Amber' },
-  { color: '#3b82f6', label: 'Cobalt Blue' },
-  { color: '#10b981', label: 'Soft Emerald' },
-  { color: '#f43f5e', label: 'Rose Accent' },
-  { color: '#c2c2c2', label: 'Ash Gray' },
-  { color: '#0a0a0a', label: 'Void Canvas Eraser' },
+const MONO_PALETTE = [
+  { color: '#ffffff', label: 'Pure White' },
+  { color: '#bdbdbd', label: 'Light Gray' },
+  { color: '#7a7a7a', label: 'Medium Gray' },
+  { color: '#454545', label: 'Dark Slate' },
+  { color: '#000000', label: 'Eraser (Void)' },
 ];
+
+const MONO_STAMPS = ['♡', '✦', '☾', '❋', '◌', '✧'];
 
 export default function Whiteboard({ roomId }) {
   const canvasRef = useRef(null);
-  const [color, setColor] = useState('#ededed');
+  const [color, setColor] = useState('#ffffff');
   const [brushSize, setBrushSize] = useState(4);
   const [isDrawing, setIsDrawing] = useState(false);
   const [partnerPointer, setPartnerPointer] = useState(null);
@@ -66,13 +65,15 @@ export default function Whiteboard({ roomId }) {
       const handleRemoteDraw = ({ canvasJSON }) => {
         if (!canvasJSON) return;
         if (canvasJSON.type === 'line') {
+          // Partner strokes are dotted
           drawLineRaw(
             canvasJSON.x0,
             canvasJSON.y0,
             canvasJSON.x1,
             canvasJSON.y1,
             canvasJSON.color,
-            canvasJSON.size
+            canvasJSON.size,
+            true
           );
         } else if (canvasJSON.type === 'stamp') {
           drawStampRaw(canvasJSON.x, canvasJSON.y, canvasJSON.emoji);
@@ -83,7 +84,7 @@ export default function Whiteboard({ roomId }) {
         if (Array.isArray(strokes)) {
           strokes.forEach((stroke) => {
             if (stroke.type === 'line') {
-              drawLineRaw(stroke.x0, stroke.y0, stroke.x1, stroke.y1, stroke.color, stroke.size);
+              drawLineRaw(stroke.x0, stroke.y0, stroke.x1, stroke.y1, stroke.color, stroke.size, false);
             } else if (stroke.type === 'stamp') {
               drawStampRaw(stroke.x, stroke.y, stroke.emoji);
             }
@@ -115,7 +116,6 @@ export default function Whiteboard({ roomId }) {
         socket.off('wb:state', handleState);
         socket.off('wb:pointer', handleRemotePointer);
         socket.off('wb:cleared', handleClear);
-        if (pointerTimeoutRef.current) clearTimeout(pointerTimeoutRef.current);
       };
     }
 
@@ -124,43 +124,36 @@ export default function Whiteboard({ roomId }) {
     };
   }, [roomId]);
 
-  const drawLineRaw = (x0, y0, x1, y1, strokeColor, size) => {
+  const drawLineRaw = (x0, y0, x1, y1, strokeColor, size, isDotted = false) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-
-    ctx.save();
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = size;
+    ctx.setLineDash(isDotted ? [6, 6] : []);
     ctx.beginPath();
     ctx.moveTo(x0, y0);
     ctx.lineTo(x1, y1);
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = size;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
     ctx.stroke();
-    ctx.closePath();
-    ctx.restore();
+    ctx.setLineDash([]);
   };
 
   const drawStampRaw = (x, y, emoji) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-
-    ctx.save();
-    ctx.font = '32px sans-serif';
+    ctx.font = '28px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(emoji, x, y);
-    ctx.restore();
   };
 
-  const getCanvasCoords = (e) => {
+  const getCanvasPos = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
-    const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     return {
       x: clientX - rect.left,
       y: clientY - rect.top,
@@ -168,76 +161,53 @@ export default function Whiteboard({ roomId }) {
   };
 
   const startDrawing = (e) => {
-    if (e.cancelable) e.preventDefault();
-    const coords = getCanvasCoords(e);
-    lastPosRef.current = coords;
+    e.preventDefault();
     setIsDrawing(true);
-
-    const socket = getSocket();
-    socket?.emit('wb:pointer', {
-      roomId,
-      x: coords.x,
-      y: coords.y,
-      isDrawing: true,
-      color,
-    });
+    const pos = getCanvasPos(e);
+    lastPosRef.current = pos;
   };
 
   const draw = (e) => {
-    if (e.cancelable) e.preventDefault();
-    const currentPos = getCanvasCoords(e);
+    if (!isDrawing) return;
+    e.preventDefault();
+    const pos = getCanvasPos(e);
+    const prev = lastPosRef.current;
+
+    // Yours are solid
+    drawLineRaw(prev.x, prev.y, pos.x, pos.y, color, brushSize, false);
 
     const socket = getSocket();
-    socket?.emit('wb:pointer', {
-      roomId,
-      x: currentPos.x,
-      y: currentPos.y,
-      isDrawing,
-      color,
-    });
-
-    if (!isDrawing) return;
-
-    drawLineRaw(
-      lastPosRef.current.x,
-      lastPosRef.current.y,
-      currentPos.x,
-      currentPos.y,
-      color,
-      brushSize
-    );
-
     socket?.emit('wb:draw', {
       roomId,
       canvasJSON: {
         type: 'line',
-        x0: lastPosRef.current.x,
-        y0: lastPosRef.current.y,
-        x1: currentPos.x,
-        y1: currentPos.y,
+        x0: prev.x,
+        y0: prev.y,
+        x1: pos.x,
+        y1: pos.y,
         color,
         size: brushSize,
       },
     });
 
-    lastPosRef.current = currentPos;
+    lastPosRef.current = pos;
   };
 
-  const stopDrawing = (e) => {
-    if (isDrawing) {
-      setIsDrawing(false);
-      const socket = getSocket();
-      socket?.emit('wb:pointer', {
-        roomId,
-        x: lastPosRef.current.x,
-        y: lastPosRef.current.y,
-        isDrawing: false,
-        color,
-      });
-    }
+  const stopDrawing = () => {
+    setIsDrawing(false);
   };
 
-  const sendStamp = (emoji) => {
+  const handlePointerMove = (e) => {
+    const pos = getCanvasPos(e);
+    const socket = getSocket();
+    socket?.emit('wb:pointer', {
+      roomId,
+      x: pos.x,
+      y: pos.y,
+    });
+  };
+
+  const addStamp = (emoji) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -266,63 +236,65 @@ export default function Whiteboard({ roomId }) {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      background: 'var(--color-graphite)',
-      borderRadius: 'var(--radius-card)', // 24px
-      border: '1px solid var(--color-hairline)',
-      overflow: 'hidden',
-      position: 'relative',
-    }}>
-      {/* Top Toolbar */}
-      <div style={{
-        padding: '0.65rem 1.25rem',
-        borderBottom: '1px solid var(--color-hairline)',
+    <div
+      style={{
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '0.75rem',
-        background: 'rgba(22, 22, 22, 0.9)',
-      }}>
-        {/* Title */}
+        flexDirection: 'column',
+        height: '100%',
+        background: '#000',
+        borderRadius: 24,
+        border: '1px solid var(--line)',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      {/* Top Toolbar */}
+      <div
+        style={{
+          padding: '0.75rem 1.25rem',
+          borderBottom: '1px solid var(--line)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
+          background: 'var(--k1)',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <span style={{ fontSize: '1rem', color: 'var(--accent-violet)' }}>✦</span>
+          <span style={{ fontSize: '1rem', color: 'var(--w)' }}>✦</span>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{
-                fontFamily: 'var(--font-dm-sans)',
-                fontWeight: 500,
-                fontSize: '0.9375rem',
-                color: 'var(--color-bone)',
-                letterSpacing: '-0.02em',
-              }}>
+              <span
+                style={{
+                  fontWeight: 500,
+                  fontSize: '0.9375rem',
+                  color: 'var(--w)',
+                  letterSpacing: '-0.02em',
+                }}
+              >
                 Collaborative Canvas
               </span>
-              <span style={{
-                fontSize: '0.6875rem',
-                padding: '0.15rem 0.6rem',
-                borderRadius: 'var(--radius-pill)',
-                background: '#1a1a1a',
-                border: '1px solid var(--color-hairline)',
-                color: 'var(--color-ash)',
-                fontWeight: 500,
-                fontFamily: 'var(--font-mono)',
-              }}>
-                Live Stream
+              <span
+                className="mono"
+                style={{
+                  fontSize: '0.6875rem',
+                  padding: '0.15rem 0.6rem',
+                  borderRadius: 999,
+                  background: 'var(--k3)',
+                  border: '1px solid var(--line)',
+                  color: 'var(--w2)',
+                }}
+              >
+                You: solid &middot; Partner: dotted
               </span>
             </div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-slate)' }}>
-              Draw, sketch, and stamp simultaneously in real time
-            </span>
           </div>
         </div>
 
-        {/* Color Palette */}
+        {/* 4-Shade Palette */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
-          {PALETTE.map((p) => (
+          {MONO_PALETTE.map((p) => (
             <button
               key={p.color}
               onClick={() => setColor(p.color)}
@@ -331,64 +303,45 @@ export default function Whiteboard({ roomId }) {
                 height: 22,
                 borderRadius: '50%',
                 background: p.color,
-                border: color === p.color ? '2px solid var(--color-snow-white)' : '1px solid var(--color-hairline)',
+                border: color === p.color ? '2px solid var(--w)' : '1px solid var(--line)',
                 cursor: 'pointer',
-                transform: color === p.color ? 'scale(1.25)' : 'scale(1)',
-                transition: 'transform var(--transition-fast)',
+                transform: color === p.color ? 'scale(1.2)' : 'scale(1)',
+                transition: 'transform 0.2s',
               }}
               title={p.label}
             />
           ))}
         </div>
 
-        {/* Controls: Stamps, Slider, Clear */}
+        {/* Glyph Stamps & Brush Controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-          {/* Stamps */}
           <div style={{ display: 'flex', gap: '0.25rem' }}>
-            {['❤️', '✨', '🌹', '💋', '⭐'].map((emoji) => (
+            {MONO_STAMPS.map((glyph) => (
               <button
-                key={emoji}
-                onClick={() => sendStamp(emoji)}
+                key={glyph}
+                onClick={() => addStamp(glyph)}
                 style={{
-                  background: '#1a1a1a',
-                  border: '1px solid var(--color-hairline)',
-                  borderRadius: 'var(--radius-pill)',
-                  padding: '0.25rem 0.5rem',
-                  fontSize: '0.875rem',
+                  background: 'transparent',
+                  border: '1px solid var(--line)',
+                  borderRadius: 6,
+                  color: 'var(--w)',
+                  fontSize: '0.9rem',
+                  padding: '0.2rem 0.45rem',
                   cursor: 'pointer',
                 }}
-                title={`Stamp ${emoji}`}
+                title="Stamp glyph"
               >
-                {emoji}
+                {glyph}
               </button>
             ))}
           </div>
 
-          {/* Size slider */}
-          <label style={{ fontSize: '0.75rem', color: 'var(--color-slate)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <span>Size</span>
-            <input
-              type="range"
-              min="2"
-              max="24"
-              value={brushSize}
-              onChange={(e) => setBrushSize(parseInt(e.target.value))}
-              style={{ width: 55, accentColor: 'var(--color-snow-white)', cursor: 'pointer' }}
-            />
-          </label>
-
-          {/* Clear */}
           <button
             onClick={clearCanvas}
+            className="pill-ghost"
             style={{
-              padding: '0.35rem 0.85rem',
-              borderRadius: 'var(--radius-pill)',
-              background: '#1a1a1a',
-              border: '1px solid var(--color-hairline)',
-              color: 'var(--color-ash)',
+              padding: '4px 10px',
               fontSize: '0.75rem',
-              fontWeight: 500,
-              cursor: 'pointer',
             }}
           >
             Clear
@@ -397,69 +350,75 @@ export default function Whiteboard({ roomId }) {
       </div>
 
       {/* Canvas Viewport */}
-      <div style={{
-        flex: 1,
-        position: 'relative',
-        background: 'var(--color-void-canvas)', // #0a0a0a
-        overflow: 'hidden',
-        touchAction: 'none',
-      }}>
+      <div
+        style={{
+          flex: 1,
+          position: 'relative',
+          overflow: 'hidden',
+          background: '#000',
+          cursor: 'crosshair',
+          touchAction: 'none',
+        }}
+      >
         <canvas
           ref={canvasRef}
           onMouseDown={startDrawing}
-          onMouseMove={draw}
+          onMouseMove={(e) => {
+            draw(e);
+            handlePointerMove(e);
+          }}
           onMouseUp={stopDrawing}
           onMouseLeave={stopDrawing}
           onTouchStart={startDrawing}
           onTouchMove={draw}
           onTouchEnd={stopDrawing}
           style={{
-            display: 'block',
+            position: 'absolute',
+            top: 0,
+            left: 0,
             width: '100%',
             height: '100%',
-            cursor: 'crosshair',
-            touchAction: 'none',
+            display: 'block',
           }}
         />
 
-        {/* Live Partner Pointer Indicator */}
+        {/* Partner Outlined Pointer Cursor */}
         {partnerPointer && (
-          <div style={{
-            position: 'absolute',
-            left: partnerPointer.x,
-            top: partnerPointer.y,
-            transform: 'translate(-50%, -100%)',
-            pointerEvents: 'none',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            transition: 'left 60ms linear, top 60ms linear',
-            zIndex: 20,
-          }}>
-            <div style={{
-              background: '#161616',
-              border: '1px solid var(--color-hairline)',
-              color: 'var(--color-bone)',
-              fontSize: '0.6875rem',
-              fontWeight: 500,
-              padding: '0.15rem 0.55rem',
-              borderRadius: 'var(--radius-pill)',
-              whiteSpace: 'nowrap',
+          <div
+            style={{
+              position: 'absolute',
+              left: partnerPointer.x,
+              top: partnerPointer.y,
+              transform: 'translate(-50%, -50%)',
+              pointerEvents: 'none',
+              zIndex: 10,
               display: 'flex',
               alignItems: 'center',
-              gap: '0.25rem',
-              fontFamily: 'var(--font-mono)',
-            }}>
-              <span>✦</span>
-              <span>{partnerPointer.username || 'Partner'}</span>
-            </div>
-            <div style={{
-              width: 6,
-              height: 6,
-              borderRadius: '50%',
-              background: partnerPointer.color || 'var(--color-snow-white)',
-              marginTop: 2,
-            }} />
+              gap: 4,
+            }}
+          >
+            <div
+              style={{
+                width: 10,
+                height: 10,
+                borderRadius: '50%',
+                border: '2px solid var(--w)',
+                background: 'transparent',
+              }}
+            />
+            <span
+              className="mono"
+              style={{
+                padding: '2px 6px',
+                borderRadius: 4,
+                background: 'rgba(0,0,0,0.85)',
+                border: '1px solid var(--line)',
+                fontSize: 10,
+                color: 'var(--w1)',
+              }}
+            >
+              Partner
+            </span>
           </div>
         )}
       </div>
