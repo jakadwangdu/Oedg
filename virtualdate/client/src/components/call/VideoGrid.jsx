@@ -29,7 +29,11 @@ export default function VideoGrid({ roomId }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [isAudioOnly, setIsAudioOnly] = useState(false);
   const [incomingCall, setIncomingCall] = useState(null);
+  const [fullscreenMode, setFullscreenMode] = useState(null); // 'local' | 'remote' | 'all' | null
 
+  const containerRef = useRef(null);
+  const localCardRef = useRef(null);
+  const remoteCardRef = useRef(null);
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const localStreamRef = useRef(null);
@@ -39,6 +43,21 @@ export default function VideoGrid({ roomId }) {
   const remoteSocketIdRef = useRef(null);
   const queuedCandidatesRef = useRef([]);
   const pendingOfferRef = useRef(null);
+
+  // Sync fullscreen state with native browser Esc/Exit
+  useEffect(() => {
+    const handleFsChange = () => {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        setFullscreenMode(null);
+      }
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+    };
+  }, []);
 
   // Clean up media on unmount
   useEffect(() => {
@@ -449,7 +468,51 @@ export default function VideoGrid({ roomId }) {
     socket?.emit('webrtc:screen_status', { roomId, isScreenSharing: false });
   };
 
+  const toggleFullscreen = (target = 'all') => {
+    if (fullscreenMode === target) {
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        try {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+        } catch (e) {}
+      }
+      setFullscreenMode(null);
+    } else {
+      setFullscreenMode(target);
+      let el = null;
+      if (target === 'all') el = containerRef.current;
+      else if (target === 'local') el = localCardRef.current;
+      else if (target === 'remote') el = remoteCardRef.current;
+
+      if (el) {
+        try {
+          if (el.requestFullscreen) {
+            el.requestFullscreen().catch(() => {});
+          } else if (el.webkitRequestFullscreen) {
+            el.webkitRequestFullscreen();
+          }
+        } catch (e) {}
+      }
+    }
+  };
+
   const leaveCall = () => {
+    if (fullscreenMode) {
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        try {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+        } catch (e) {}
+      }
+      setFullscreenMode(null);
+    }
+
     stopScreenShare();
 
     if (localStreamRef.current) {
@@ -498,17 +561,56 @@ export default function VideoGrid({ roomId }) {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      background: 'var(--color-graphite)',
-      borderRadius: 'var(--radius-card)', // 24px
-      border: '1px solid var(--color-hairline)',
-      overflow: 'hidden',
-      padding: '1.25rem',
-      position: 'relative',
-    }}>
+    <div
+      ref={containerRef}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        background: 'var(--color-graphite)',
+        borderRadius: fullscreenMode === 'all' ? 0 : 'var(--radius-card)', // 24px
+        border: fullscreenMode === 'all' ? 'none' : '1px solid var(--color-hairline)',
+        overflow: 'hidden',
+        padding: fullscreenMode === 'all' ? '1.5rem' : '1.25rem',
+        position: fullscreenMode === 'all' ? 'fixed' : 'relative',
+        ...(fullscreenMode === 'all' ? {
+          inset: 0,
+          zIndex: 9999,
+          width: '100vw',
+          height: '100vh',
+          background: '#0a0a0a',
+        } : {}),
+      }}
+    >
+      {/* Floating Exit Fullscreen Button when any full screen mode is active */}
+      {fullscreenMode && (
+        <button
+          onClick={() => toggleFullscreen(fullscreenMode)}
+          style={{
+            position: 'fixed',
+            top: 20,
+            right: 20,
+            zIndex: 10001,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+            padding: '0.5rem 1rem',
+            borderRadius: 'var(--radius-pill)',
+            background: 'rgba(22, 22, 22, 0.92)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid var(--color-hairline)',
+            color: 'var(--color-bone)',
+            fontSize: '0.8125rem',
+            fontWeight: 500,
+            cursor: 'pointer',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.7)',
+          }}
+          title="Exit full screen (or press Esc)"
+        >
+          <span>✕</span>
+          <span>Exit Full Screen</span>
+        </button>
+      )}
       {/* Incoming Call Ringing Modal Alert */}
       {incomingCall && !inCall && (
         <div style={{
@@ -737,16 +839,28 @@ export default function VideoGrid({ roomId }) {
         minHeight: 280,
       }}>
         {/* Local Participant Card */}
-        <div style={{
-          position: 'relative',
-          background: 'var(--color-void-canvas)', // #0a0a0a
-          borderRadius: 'var(--radius-card)',
-          overflow: 'hidden',
-          border: '1px solid var(--color-hairline)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
+        <div
+          ref={localCardRef}
+          style={{
+            position: fullscreenMode === 'local' ? 'fixed' : 'relative',
+            ...(fullscreenMode === 'local' ? {
+              inset: 0,
+              zIndex: 10000,
+              width: '100vw',
+              height: '100vh',
+              borderRadius: 0,
+              background: '#000',
+            } : {
+              background: 'var(--color-void-canvas)', // #0a0a0a
+              borderRadius: 'var(--radius-card)',
+              overflow: 'hidden',
+              border: '1px solid var(--color-hairline)',
+            }),
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           {inCall && !isAudioOnly && !cameraOff ? (
             <video
               ref={localVideoRef}
@@ -787,6 +901,35 @@ export default function VideoGrid({ roomId }) {
             </div>
           )}
 
+          {/* Fullscreen Preview button on local card */}
+          {inCall && (!cameraOff || isScreenSharing) && (
+            <button
+              onClick={() => toggleFullscreen('local')}
+              style={{
+                position: 'absolute',
+                top: 12,
+                right: 12,
+                zIndex: 10,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.3rem 0.65rem',
+                borderRadius: 'var(--radius-pill)',
+                background: 'rgba(22, 22, 22, 0.78)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid var(--color-hairline)',
+                color: 'var(--color-bone)',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                fontFamily: 'var(--font-mono)',
+              }}
+              title={fullscreenMode === 'local' ? 'Exit preview full screen' : 'Expand preview to full screen'}
+            >
+              <span>{fullscreenMode === 'local' ? '🗗' : '⛶'}</span>
+              <span>{isScreenSharing ? (fullscreenMode === 'local' ? 'Exit Preview' : 'Fullscreen Preview') : (fullscreenMode === 'local' ? 'Exit' : 'Fullscreen')}</span>
+            </button>
+          )}
+
           {inCall && (
             <div style={{
               position: 'absolute',
@@ -814,16 +957,28 @@ export default function VideoGrid({ roomId }) {
 
         {/* Remote Partner Card */}
         {hasRemoteUser ? (
-          <div style={{
-            position: 'relative',
-            background: 'var(--color-void-canvas)',
-            borderRadius: 'var(--radius-card)',
-            overflow: 'hidden',
-            border: '1px solid var(--color-hairline)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
+          <div
+            ref={remoteCardRef}
+            style={{
+              position: fullscreenMode === 'remote' ? 'fixed' : 'relative',
+              ...(fullscreenMode === 'remote' ? {
+                inset: 0,
+                zIndex: 10000,
+                width: '100vw',
+                height: '100vh',
+                borderRadius: 0,
+                background: '#000',
+              } : {
+                background: 'var(--color-void-canvas)',
+                borderRadius: 'var(--radius-card)',
+                overflow: 'hidden',
+                border: '1px solid var(--color-hairline)',
+              }),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <video
               ref={(el) => {
                 if (el && remoteStreamRef.current && el.srcObject !== remoteStreamRef.current) {
@@ -840,6 +995,82 @@ export default function VideoGrid({ roomId }) {
                 objectFit: partnerScreenSharing ? 'contain' : 'cover',
               }}
             />
+
+            {/* Fullscreen Button for Partner Stream / Screen Share */}
+            <button
+              onClick={() => toggleFullscreen('remote')}
+              style={{
+                position: 'absolute',
+                top: 12,
+                right: 12,
+                zIndex: 10,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.3rem 0.75rem',
+                borderRadius: 'var(--radius-pill)',
+                background: 'rgba(22, 22, 22, 0.78)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid var(--color-hairline)',
+                color: 'var(--color-bone)',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                fontFamily: 'var(--font-mono)',
+              }}
+              title={fullscreenMode === 'remote' ? 'Exit full screen' : (partnerScreenSharing ? 'View screen share in full screen' : 'View partner in full screen')}
+            >
+              <span>{fullscreenMode === 'remote' ? '🗗' : '⛶'}</span>
+              <span>{partnerScreenSharing ? (fullscreenMode === 'remote' ? 'Exit Full Screen' : 'Full Screen Share') : (fullscreenMode === 'remote' ? 'Exit Full Screen' : 'Full Screen')}</span>
+            </button>
+
+            {/* PiP (Picture in Picture) of local user when partner is fullscreen */}
+            {fullscreenMode === 'remote' && inCall && !cameraOff && !isAudioOnly && (
+              <div style={{
+                position: 'absolute',
+                bottom: 24,
+                right: 24,
+                width: 190,
+                height: 118,
+                borderRadius: 'var(--radius-card)',
+                overflow: 'hidden',
+                border: '2px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 12px 36px rgba(0, 0, 0, 0.85)',
+                zIndex: 20,
+                background: '#161616',
+              }}>
+                <video
+                  ref={(el) => {
+                    if (el && localStreamRef.current && el.srcObject !== localStreamRef.current) {
+                      el.srcObject = isScreenSharing && screenStreamRef.current ? screenStreamRef.current : localStreamRef.current;
+                      el.play().catch(() => {});
+                    }
+                  }}
+                  autoPlay
+                  playsInline
+                  muted
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: isScreenSharing ? 'contain' : 'cover',
+                    transform: isScreenSharing ? 'none' : 'scaleX(-1)',
+                  }}
+                />
+                <span style={{
+                  position: 'absolute',
+                  bottom: 6,
+                  left: 6,
+                  background: 'rgba(0,0,0,0.7)',
+                  padding: '0.15rem 0.45rem',
+                  borderRadius: 'var(--radius-pill)',
+                  fontSize: '0.6875rem',
+                  color: 'var(--color-bone)',
+                  fontFamily: 'var(--font-mono)',
+                }}>
+                  You {isScreenSharing ? '(Screen)' : ''}
+                </span>
+              </div>
+            )}
+
             <div style={{
               position: 'absolute',
               bottom: 12,
@@ -957,6 +1188,28 @@ export default function VideoGrid({ roomId }) {
           >
             <span>🖥️</span>
             <span>{isScreenSharing ? 'Stop Sharing' : 'Share Screen'}</span>
+          </button>
+
+          {/* Full Screen Call Toggle */}
+          <button
+            onClick={() => toggleFullscreen('all')}
+            style={{
+              padding: '0.5rem 1.15rem',
+              borderRadius: 'var(--radius-pill)',
+              background: fullscreenMode === 'all' ? 'var(--color-snow-white)' : '#1a1a1a',
+              border: fullscreenMode === 'all' ? '1px solid var(--color-snow-white)' : '1px solid var(--color-hairline)',
+              color: fullscreenMode === 'all' ? 'var(--color-graphite)' : 'var(--color-bone)',
+              fontSize: '0.8125rem',
+              fontWeight: 500,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              cursor: 'pointer',
+            }}
+            title={fullscreenMode === 'all' ? 'Exit full screen call' : 'View entire call in full screen'}
+          >
+            <span>{fullscreenMode === 'all' ? '🗗' : '⛶'}</span>
+            <span>{fullscreenMode === 'all' ? 'Exit Full Screen' : 'Full Screen Call'}</span>
           </button>
 
           {/* Hang Up Button */}

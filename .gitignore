@@ -35,3 +35,7 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Local documentation (never push to GitHub)
+WEBSITE_ROLE.md
+**/WEBSITE_ROLE.md
