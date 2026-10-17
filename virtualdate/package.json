@@ -1,0 +1,14 @@
+{
+  "name": "virtualdate",
+  "version": "1.0.0",
+  "description": "Cozy online virtual date platform for couples and friends",
+  "scripts": {
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "start": "node server/server.js",
+    "build": "cd client && npm run build"
+  },
+  "keywords": ["virtual-date", "webrtc", "socket.io", "react", "express"],
+  "author": "",
+  "license": "MIT"
+}

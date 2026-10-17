@@ -1,0 +1,128 @@
+[
+  {
+    "_id": "8a4ddc6b-2f48-44c2-b014-644cf8bee466",
+    "roomId": "test-room-verify",
+    "sender": {
+      "_id": "guest_6eHiBSaMpXXVB6s0AAAC",
+      "username": "Guest",
+      "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=guest_6eHiBSaMpXXVB6s0AAAC"
+    },
+    "senderName": "Guest",
+    "senderAvatar": "https://api.dicebear.com/7.x/bottts/svg?seed=guest_6eHiBSaMpXXVB6s0AAAC",
+    "text": "Hello from verification test!",
+    "type": "text",
+    "sentAt": "2026-10-17T10:25:38.964Z"
+  },
+  {
+    "_id": "067d32f7-9bd4-4eb7-abb3-e6746cda1d82",
+    "roomId": "e8a197c5-8285-4bef-9434-b7a2fae25c51",
+    "sender": {
+      "_id": "guest_d2c24b98-0e8a-4435-b8e6-d1162be5075c",
+      "username": "Shaurya",
+      "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=Shaurya"
+    },
+    "senderName": "Shaurya",
+    "senderAvatar": "https://api.dicebear.com/7.x/bottts/svg?seed=Shaurya",
+    "text": "hi",
+    "type": "text",
+    "sentAt": "2026-10-17T10:30:38.691Z"
+  },
+  {
+    "_id": "e9abf794-dcfc-444e-b4e9-f16f6643c19b",
+    "roomId": "e8a197c5-8285-4bef-9434-b7a2fae25c51",
+    "sender": {
+      "_id": "guest_d2c24b98-0e8a-4435-b8e6-d1162be5075c",
+      "username": "Shaurya",
+      "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=Shaurya"
+    },
+    "senderName": "Shaurya",
+    "senderAvatar": "https://api.dicebear.com/7.x/bottts/svg?seed=Shaurya",
+    "text": "wht u doin",
+    "type": "text",
+    "sentAt": "2026-10-17T10:30:49.506Z"
+  },
+  {
+    "_id": "4ef90424-2ef9-43f2-87d2-297e0aa82ca7",
+    "roomId": "e8a197c5-8285-4bef-9434-b7a2fae25c51",
+    "sender": {
+      "_id": "88c8baf5-cd32-48ac-9819-55fc6be6c448",
+      "username": "Shaurya",
+      "avatar": ""
+    },
+    "senderName": "Shaurya",
+    "senderAvatar": "",
+    "text": "🥰",
+    "type": "emoji",
+    "sentAt": "2026-10-17T10:31:49.906Z"
+  },
+  {
+    "_id": "0ed0e3ee-49dd-4681-9ab8-71fd0b865d1b",
+    "roomId": "e8a197c5-8285-4bef-9434-b7a2fae25c51",
+    "sender": {
+      "_id": "88c8baf5-cd32-48ac-9819-55fc6be6c448",
+      "username": "Shaurya",
+      "avatar": ""
+    },
+    "senderName": "Shaurya",
+    "senderAvatar": "",
+    "text": "https://youtu.be/PaBLv1TyWRk",
+    "type": "text",
+    "sentAt": "2026-10-17T10:34:12.631Z"
+  },
+  {
+    "_id": "7f63fcea-6623-4793-8bb2-e72543da418c",
+    "roomId": "e8a197c5-8285-4bef-9434-b7a2fae25c51",
+    "sender": {
+      "_id": "88c8baf5-cd32-48ac-9819-55fc6be6c448",
+      "username": "Shaurya",
+      "avatar": ""
+    },
+    "senderName": "Shaurya",
+    "senderAvatar": "",
+    "text": "https://youtu.be/PaBLv1TyWRk",
+    "type": "text",
+    "sentAt": "2026-10-17T10:34:13.756Z"
+  },
+  {
+    "_id": "466d6ed0-7b85-44fe-aab5-394a24ff5677",
+    "roomId": "e8a197c5-8285-4bef-9434-b7a2fae25c51",
+    "sender": {
+      "_id": "88c8baf5-cd32-48ac-9819-55fc6be6c448",
+      "username": "Shaurya",
+      "avatar": ""
+    },
+    "senderName": "Shaurya",
+    "senderAvatar": "",
+    "text": "https://youtu.be/PaBLv1TyWRk",
+    "type": "text",
+    "sentAt": "2026-10-17T10:34:14.056Z"
+  },
+  {
+    "_id": "8d0761da-31c3-43f0-a3cf-0a0afd05579d",
+    "roomId": "e8a197c5-8285-4bef-9434-b7a2fae25c51",
+    "sender": {
+      "_id": "88c8baf5-cd32-48ac-9819-55fc6be6c448",
+      "username": "Shaurya",
+      "avatar": ""
+    },
+    "senderName": "Shaurya",
+    "senderAvatar": "",
+    "text": "https://youtu.be/PaBLv1TyWRk",
+    "type": "text",
+    "sentAt": "2026-10-17T10:34:14.323Z"
+  },
+  {
+    "_id": "dfa227ca-815d-4c64-ac69-e965271aa807",
+    "roomId": "e8a197c5-8285-4bef-9434-b7a2fae25c51",
+    "sender": {
+      "_id": "88c8baf5-cd32-48ac-9819-55fc6be6c448",
+      "username": "Shaurya",
+      "avatar": ""
+    },
+    "senderName": "Shaurya",
+    "senderAvatar": "",
+    "text": "https://youtu.be/PaBLv1TyWRk",
+    "type": "text",
+    "sentAt": "2026-10-17T10:34:14.555Z"
+  }
+]

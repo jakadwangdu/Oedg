@@ -1,0 +1,23 @@
+{
+  "name": "oedg",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Oedg - VirtualDate: Dusk-lit real-time sanctuary for couples and friends",
+  "scripts": {
+    "build": "cd virtualdate/client && npm install && npm run build",
+    "install:all": "npm install --prefix virtualdate/client && npm install --prefix virtualdate/server",
+    "dev:client": "cd virtualdate/client && npm run dev",
+    "dev:server": "cd virtualdate/server && node server.js"
+  },
+  "keywords": [
+    "virtualdate",
+    "oedg",
+    "webrtc",
+    "socketio",
+    "react",
+    "vite",
+    "screen-sharing"
+  ],
+  "author": "jakadwangdu",
+  "license": "MIT"
+}

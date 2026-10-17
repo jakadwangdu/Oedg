@@ -1,0 +1,65 @@
+[
+  {
+    "_id": "88c8baf5-cd32-48ac-9819-55fc6be6c448",
+    "username": "Shaurya",
+    "email": "shaurya@example.com",
+    "passwordHash": "$2a$10$41phRuimIBzaKAvGVPqYJuYA5SaiBoOYJxUzP1VEOSO3rZCYs2E7K",
+    "avatar": "",
+    "bio": "",
+    "createdAt": "2026-10-16T23:21:09.076Z"
+  },
+  {
+    "_id": "b0bdd193-6b2f-4e0a-83c5-30fe3d966881",
+    "username": "Dev",
+    "email": "shaurya@gmail.com",
+    "passwordHash": "$2a$10$mauHPTti8VEQh7rMQ8lEYOQTpPefCYQKDP86V/aVSdGmflN.VYbsK",
+    "avatar": "",
+    "bio": "",
+    "createdAt": "2026-10-16T23:23:44.273Z"
+  },
+  {
+    "_id": "2c67256d-d29e-40f2-881a-d5c7b99d4dc9",
+    "username": "Alpha",
+    "email": "pocom2pro@gmail.com",
+    "passwordHash": "$2a$10$qWnaiuRJY8eLIcPMH0BgkOc9wgNTfvJl2.rWGjr0o.6orp7OepLq2",
+    "avatar": "",
+    "bio": "",
+    "createdAt": "2026-10-16T23:26:10.311Z"
+  },
+  {
+    "_id": "guest_0ebd4ce5-2129-4211-bc92-c2d5a869d4a9",
+    "username": "TestGuest123",
+    "email": "guest_9471@virtualdate.local",
+    "isGuest": true,
+    "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=TestGuest123",
+    "bio": "Romantic date night guest ✨",
+    "createdAt": "2026-10-16T23:50:28.054Z"
+  },
+  {
+    "_id": "guest_f735a62f-d14d-4a60-8939-cc6f7700e819",
+    "username": "PartnerGuest",
+    "email": "guest_3234@virtualdate.local",
+    "isGuest": true,
+    "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=PartnerGuest",
+    "bio": "Romantic date night guest ✨",
+    "createdAt": "2026-10-16T23:56:42.335Z"
+  },
+  {
+    "_id": "guest_d34ce6d4-410c-486f-ae44-527ffe872381",
+    "username": "DateGuest_4790",
+    "email": "guest_4790@virtualdate.local",
+    "isGuest": true,
+    "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=DateGuest_4790",
+    "bio": "Romantic date night guest ✨",
+    "createdAt": "2026-10-17T09:38:04.367Z"
+  },
+  {
+    "_id": "guest_d2c24b98-0e8a-4435-b8e6-d1162be5075c",
+    "username": "Shaurya",
+    "email": "guest_6438@virtualdate.local",
+    "isGuest": true,
+    "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=Shaurya",
+    "bio": "Romantic date night guest ✨",
+    "createdAt": "2026-10-17T09:47:11.258Z"
+  }
+]
