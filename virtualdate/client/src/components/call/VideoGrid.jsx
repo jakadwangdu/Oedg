@@ -1158,7 +1158,7 @@ export default function VideoGrid({ roomId }) {
                 cursor: 'pointer',
                 fontFamily: 'var(--font-mono)',
               }}
-              title={fullscreenMode === 'remote' ? 'Exit full screen' : (partnerScreenSharing ? 'View screen share in full screen' : 'View partner in full screen')}
+              title={fullscreenMode === 'remote' ? 'Exit full screen' : (partnerScreenSharing ? 'View screen share in full screen' : 'View attendee in full screen')}
             >
               <span>{fullscreenMode === 'remote' ? '🗗' : '⛶'}</span>
               <span>{partnerScreenSharing ? (fullscreenMode === 'remote' ? 'Exit Full Screen' : 'Full Screen Share') : (fullscreenMode === 'remote' ? 'Exit Full Screen' : 'Full Screen')}</span>

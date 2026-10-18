@@ -40,14 +40,14 @@ export default function RoomPage() {
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [mobileChatOpen, setMobileChatOpen] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [syncWithPartner, setSyncWithPartner] = useState(true);
+  const [syncWithTeam, setSyncWithTeam] = useState(true);
   const [activityNotice, setActivityNotice] = useState('');
 
-  // Ref to hold syncWithPartner state so toggling doesn't re-trigger socket teardown
-  const syncWithPartnerRef = useRef(syncWithPartner);
+  // Ref to hold syncWithTeam state so toggling doesn't re-trigger socket teardown
+  const syncWithTeamRef = useRef(syncWithTeam);
   useEffect(() => {
-    syncWithPartnerRef.current = syncWithPartner;
-  }, [syncWithPartner]);
+    syncWithTeamRef.current = syncWithTeam;
+  }, [syncWithTeam]);
 
   // Password & Guest Entry states
   const [needsPassword, setNeedsPassword] = useState(false);
@@ -132,12 +132,12 @@ export default function RoomPage() {
       if (msg) addMessage(msg);
     });
 
-    // Real-time Activity Sync: when partner switches activity
+    // Real-time Activity Sync: when a team member switches activity
     socket.on('room:activity_change', ({ activity, username }) => {
       setActivityNotice(`${username} opened ${activity} ✦`);
       setTimeout(() => setActivityNotice(''), 3500);
 
-      if (syncWithPartnerRef.current) {
+      if (syncWithTeamRef.current) {
         setCurrentActivity(activity);
       }
     });
@@ -286,7 +286,7 @@ export default function RoomPage() {
         position: 'relative',
         overflow: 'hidden',
       }}>
-        {/* Background swirling partner lights */}
+        {/* Background ambient field */}
         <HeroField densityMultiplier={0.35} interactive={false} />
 
         <div style={{
@@ -456,7 +456,7 @@ export default function RoomPage() {
         background: 'var(--k1)',
         borderBottom: '1px solid var(--line)',
       }}>
-        {/* Left: Sanctuary identity & duration */}
+        {/* Left: Workspace identity & duration */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0 }}>
           <button
             onClick={() => navigate('/dashboard')}
@@ -513,26 +513,26 @@ export default function RoomPage() {
 
         {/* Right Actions: Desktop & Mobile responsive splits */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
-          {/* Desktop Only: Partner Sync Toggle */}
+          {/* Desktop Only: Team Sync Toggle */}
           <button
-            onClick={() => setSyncWithPartner(!syncWithPartner)}
+            onClick={() => setSyncWithTeam(!syncWithTeam)}
             className="desktop-only"
             style={{
               padding: '0.4rem 0.85rem',
               borderRadius: 999,
-              background: syncWithPartner ? 'var(--glass)' : 'var(--k2)',
-              border: `1px solid ${syncWithPartner ? 'var(--w)' : 'var(--line)'}`,
-              color: syncWithPartner ? 'var(--w)' : 'var(--w3)',
+              background: syncWithTeam ? 'var(--glass)' : 'var(--k2)',
+              border: `1px solid ${syncWithTeam ? 'var(--w)' : 'var(--line)'}`,
+              color: syncWithTeam ? 'var(--w)' : 'var(--w3)',
               fontSize: '0.75rem',
               fontWeight: 500,
               alignItems: 'center',
               gap: '0.35rem',
               cursor: 'pointer',
             }}
-            title="When synced, switching activity tabs changes both screens"
+            title="When synced, switching activity tabs changes both screens for all attendees"
           >
             <span>🔗</span>
-            <span>{syncWithPartner ? 'Synced' : 'Solo'}</span>
+            <span>{syncWithTeam ? 'Synced' : 'Solo'}</span>
           </button>
 
           {/* Floating Cam Toggle (Desktop) */}

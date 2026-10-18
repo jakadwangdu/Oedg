@@ -24,14 +24,14 @@ export default function RoomShell({ onEnterRoom }) {
   // Flow tab constellation/node state
   const [stars, setStars] = useState([
     { x: 120, y: 140, type: 'you' },
-    { x: 220, y: 100, type: 'partner' },
+    { x: 220, y: 100, type: 'teammate' },
     { x: 340, y: 180, type: 'you' },
-    { x: 420, y: 130, type: 'partner' },
+    { x: 420, y: 130, type: 'teammate' },
   ]);
 
   // Notes state
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'partner', text: 'Sharing the sprint roadmap walkthrough now...' },
+    { id: 1, sender: 'teammate', text: 'Sharing the sprint roadmap walkthrough now...' },
     { id: 2, sender: 'you', text: 'Architecture targets are well defined. ✦' },
   ]);
   const [inputText, setInputText] = useState('');
@@ -135,15 +135,15 @@ export default function RoomShell({ onEnterRoom }) {
 
     setStars((prev) => [...prev, newStar]);
 
-    // Partner automatic constellation response after 450ms
+    // Teammate automatic constellation response after 450ms
     setTimeout(() => {
       const partnerX = x + (Math.random() * 80 - 40);
       const partnerY = y + (Math.random() * 80 - 40);
-      setStars((prev) => [...prev, { x: partnerX, y: partnerY, type: 'partner' }]);
+      setStars((prev) => [...prev, { x: partnerX, y: partnerY, type: 'teammate' }]);
     }, 450);
   };
 
-  // Send whisper note
+  // Send team note
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!inputText.trim()) return;
@@ -155,13 +155,13 @@ export default function RoomShell({ onEnterRoom }) {
     setMessages((prev) => [...prev, newMsg]);
     setInputText('');
 
-    // Trigger subtle partner reaction
+    // Trigger subtle teammate reaction
     setTimeout(() => {
       setParticles((prev) => [
         ...prev,
         {
           id: Date.now(),
-          glyph: '♡',
+          glyph: '⚡',
           x: Math.random() * 60 + 20,
         },
       ]);
@@ -577,7 +577,7 @@ export default function RoomShell({ onEnterRoom }) {
                 }}
               >
                 <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-                  {/* Demo hand-drawn strokes: Solid for you, dotted for partner */}
+                  {/* Demo hand-drawn strokes: Solid for you, dotted for teammate */}
                   <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }}>
                     {/* Your solid line */}
                     <path
@@ -587,7 +587,7 @@ export default function RoomShell({ onEnterRoom }) {
                       fill="none"
                       strokeLinecap="round"
                     />
-                    {/* Partner dotted line */}
+                    {/* Teammate dotted line */}
                     <path
                       d="M 80 210 Q 160 250, 240 210 T 400 210"
                       stroke="#a8a8a8"
@@ -725,7 +725,7 @@ export default function RoomShell({ onEnterRoom }) {
                         y2={s.y}
                         stroke="rgba(255,255,255,0.18)"
                         strokeWidth="1"
-                        strokeDasharray={s.type === 'partner' ? '3 3' : 'none'}
+                        strokeDasharray={s.type === 'teammate' ? '3 3' : 'none'}
                       />
                     );
                   })}

@@ -137,7 +137,7 @@ export default function ProfilePage() {
               value={form.bio}
               onChange={(e) => setForm({ ...form, bio: e.target.value })}
               rows={3}
-              placeholder="Tell your partner a little about yourself..."
+              placeholder="Tell your team or co-founders a little about yourself..."
               maxLength={200}
               style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.5 }}
             />

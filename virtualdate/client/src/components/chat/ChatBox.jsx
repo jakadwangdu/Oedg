@@ -199,7 +199,7 @@ export default function ChatBox({ roomId }) {
               letterSpacing: '-0.02em',
             }}
           >
-            Whisper Notes
+            Team Chat
           </span>
         </div>
         <span
@@ -209,7 +209,7 @@ export default function ChatBox({ roomId }) {
             color: 'var(--w3)',
           }}
         >
-          {messages.length} notes
+          {messages.length} messages
         </span>
       </div>
 
@@ -234,10 +234,10 @@ export default function ChatBox({ roomId }) {
               padding: '2rem 1rem',
             }}
           >
-            <div style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>☾</div>
-            <p style={{ color: 'var(--w2)', fontWeight: 400, margin: 0 }}>No whispers yet.</p>
+            <div style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>💬</div>
+            <p style={{ color: 'var(--w2)', fontWeight: 400, margin: 0 }}>No messages yet.</p>
             <p style={{ fontSize: '0.75rem', color: 'var(--w3)', marginTop: '0.25rem' }}>
-              Send a note or monochrome reaction.
+              Send a note or reaction pulse to your team.
             </p>
           </div>
         ) : (
@@ -245,7 +245,7 @@ export default function ChatBox({ roomId }) {
             const currentUserId = String(user?._id || user?.id || '');
             const currentUsername = String(user?.username || '').toLowerCase();
             const senderId = String(msg.sender?._id || msg.sender || '');
-            const senderName = String(msg.sender?.username || msg.senderName || 'Partner');
+            const senderName = String(msg.sender?.username || msg.senderName || 'Teammate');
             const avatar = msg.sender?.avatar || msg.senderAvatar;
 
             const isMe =
@@ -391,7 +391,7 @@ export default function ChatBox({ roomId }) {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Whisper a message..."
+          placeholder="Type a team message or meeting note..."
           style={{
             flex: 1,
             padding: '0.625rem 0.95rem',

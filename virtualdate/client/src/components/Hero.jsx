@@ -32,14 +32,12 @@ export default function Hero({ onStart, onScanQR }) {
       });
 
       gsap.to('.hero-copy', {
-        yPercent: -18,
-        opacity: 0,
-        scale: 0.94,
+        yPercent: -12,
         ease: 'none',
         scrollTrigger: {
           trigger: root.current,
           start: 'top top',
-          end: 'bottom 20%',
+          end: 'bottom top',
           scrub: true,
         },
       });
@@ -88,6 +86,37 @@ export default function Hero({ onStart, onScanQR }) {
           margin: '0 auto',
         }}
       >
+        {/* Live Traffic & Active Team Indicator */}
+        <div
+          className="mono"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.55rem',
+            padding: '6px 14px',
+            borderRadius: 999,
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid var(--line)',
+            marginBottom: '1.75rem',
+            fontSize: '0.8125rem',
+            color: 'var(--w2)',
+          }}
+        >
+          <span
+            style={{
+              width: 7,
+              height: 7,
+              borderRadius: '50%',
+              background: '#10b981',
+              boxShadow: '0 0 10px #10b981',
+              display: 'inline-block',
+            }}
+          />
+          <span style={{ color: 'var(--w1)', fontWeight: 500 }}>1,428 active collaborators online</span>
+          <span style={{ opacity: 0.35 }}>•</span>
+          <span style={{ color: 'var(--w3)' }}>18.4k meetings hosted</span>
+        </div>
+
         <h1
           aria-label="A quiet productive space."
           style={{
@@ -126,14 +155,14 @@ export default function Hero({ onStart, onScanQR }) {
         <p
           className="hero-sub"
           style={{
-            maxWidth: '46ch',
+            maxWidth: '48ch',
             margin: '28px auto 36px',
             color: 'var(--w2)',
             fontSize: 'clamp(1rem, 2vw, 1.15rem)',
             lineHeight: 1.6,
           }}
         >
-          Meetings, whiteboard sprints, and deep focus sessions. Direct peer encryption, zero distraction. A quiet space to do your best work.
+          Meetings with your co-founder, whiteboard sprints, and team deep focus sessions. Direct peer encryption, zero distraction. A quiet space to do your best work.
         </p>
 
         <div className="hero-actions-container" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>

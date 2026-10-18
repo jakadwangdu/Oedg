@@ -286,7 +286,7 @@ export default function Whiteboard({ roomId }) {
                   color: 'var(--w2)',
                 }}
               >
-                You: solid &middot; Partner: dotted
+                You: solid &middot; Teammate: dotted
               </span>
             </div>
           </div>
@@ -417,7 +417,7 @@ export default function Whiteboard({ roomId }) {
                 color: 'var(--w1)',
               }}
             >
-              Partner
+              Teammate
             </span>
           </div>
         )}

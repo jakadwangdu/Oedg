@@ -2,7 +2,7 @@
   "name": "oedg",
   "version": "1.0.0",
   "private": true,
-  "description": "Oedg - VirtualDate: Dusk-lit real-time sanctuary for couples and friends",
+  "description": "Oedg: A quiet productive space for remote meetings, co-founders, and team collaboration",
   "scripts": {
     "build": "cd virtualdate/client && npm install && npm run build",
     "install:all": "npm install --prefix virtualdate/client && npm install --prefix virtualdate/server",
@@ -10,8 +10,10 @@
     "dev:server": "cd virtualdate/server && node server.js"
   },
   "keywords": [
-    "virtualdate",
     "oedg",
+    "productive-space",
+    "team-meetings",
+    "co-founder",
     "webrtc",
     "socketio",
     "react",
