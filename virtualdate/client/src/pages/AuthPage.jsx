@@ -13,6 +13,10 @@ export default function AuthPage({ mode = 'login' }) {
   const [form, setForm] = useState({ username: '', email: '', password: '' });
   const [localError, setLocalError] = useState('');
   const [qrScannerOpen, setQrScannerOpen] = useState(false);
+  const [googleModalOpen, setGoogleModalOpen] = useState(false);
+  const [googleClientIdInput, setGoogleClientIdInput] = useState(
+    localStorage.getItem('oedg_google_client_id') || ''
+  );
 
   useEffect(() => {
     // Dynamically load Google Identity Services if not already present
@@ -27,40 +31,96 @@ export default function AuthPage({ mode = 'login' }) {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleGoogleSignIn = async () => {
+  // Trigger Google OAuth2 access token popup
+  const triggerOAuthPopup = (clientId) => {
+    if (window.google?.accounts?.oauth2) {
+      try {
+        const client = window.google.accounts.oauth2.initTokenClient({
+          client_id: clientId,
+          scope: 'email profile openid',
+          callback: async (tokenResponse) => {
+            if (tokenResponse?.access_token) {
+              try {
+                const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                  headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+                });
+                const userInfo = await userInfoRes.json();
+                if (userInfo.email) {
+                  const res = await googleLogin({
+                    email: userInfo.email,
+                    name: userInfo.name,
+                    avatar: userInfo.picture,
+                    googleId: userInfo.sub,
+                  });
+                  if (res.success) navigate('/dashboard');
+                  else setLocalError(res.error);
+                } else {
+                  setLocalError('Google did not return a verified email address.');
+                }
+              } catch (err) {
+                setLocalError('Failed to verify profile with Google API: ' + err.message);
+              }
+            } else if (tokenResponse?.error) {
+              setLocalError('Google authentication error: ' + tokenResponse.error);
+            }
+          },
+        });
+        client.requestAccessToken();
+        return true;
+      } catch (e) {
+        console.warn('OAuth popup initiation failed:', e);
+      }
+    }
+    return false;
+  };
+
+  // Execute authentication with Google
+  const executeGoogleAuth = (clientId) => {
     setLocalError('');
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId) return;
 
-    if (window.google?.accounts?.id && clientId) {
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: async (response) => {
-          if (response?.credential) {
-            const res = await googleLogin({ credential: response.credential });
-            if (res.success) navigate('/dashboard');
-            else setLocalError(res.error);
-          }
-        },
-      });
-      window.google.accounts.id.prompt();
-      return;
-    }
+    localStorage.setItem('oedg_google_client_id', clientId);
 
-    // Direct Google Sign-In prompt
-    const userEmail = prompt('Enter your Google account email to sign in directly:');
-    if (!userEmail) return;
-    const cleanEmail = userEmail.trim().toLowerCase();
-    if (!cleanEmail.includes('@')) {
-      return setLocalError('Please enter a valid Google email address.');
+    if (window.google?.accounts?.id) {
+      try {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: async (response) => {
+            if (response?.credential) {
+              const res = await googleLogin({ credential: response.credential });
+              if (res.success) navigate('/dashboard');
+              else setLocalError(res.error);
+            }
+          },
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+
+        // Trigger Google OAuth popup flow
+        if (window.google?.accounts?.oauth2) {
+          triggerOAuthPopup(clientId);
+          return;
+        }
+
+        window.google.accounts.id.prompt();
+      } catch (err) {
+        console.warn('Google Identity initialization failed:', err);
+        setLocalError('Could not initialize Google authentication: ' + err.message);
+      }
+    } else {
+      setLocalError('Google Identity Services is still loading. Please try again in a few seconds.');
     }
-    const res = await googleLogin({
-      email: cleanEmail,
-      name: cleanEmail.split('@')[0],
-      googleId: 'g_' + btoa(cleanEmail).slice(0, 16),
-      avatar: `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(cleanEmail)}`,
-    });
-    if (res.success) navigate('/dashboard');
-    else setLocalError(res.error);
+  };
+
+  const handleGoogleSignIn = () => {
+    setLocalError('');
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || localStorage.getItem('oedg_google_client_id');
+
+    if (clientId) {
+      executeGoogleAuth(clientId);
+    } else {
+      setGoogleModalOpen(true);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -317,6 +377,102 @@ export default function AuthPage({ mode = 'login' }) {
           </button>
         </div>
       </div>
+
+      {/* Google OAuth Modal */}
+      {googleModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1.5rem',
+          }}
+          onClick={() => setGoogleModalOpen(false)}
+        >
+          <div
+            style={{
+              background: 'var(--k1)',
+              border: '1px solid var(--line)',
+              borderRadius: 24,
+              padding: '2.5rem 2rem',
+              maxWidth: 440,
+              width: '100%',
+              boxShadow: '0 40px 120px rgba(255, 255, 255, 0.05)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>✦</span>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 500, color: 'var(--w)', letterSpacing: '-0.03em' }}>
+                  Google Authentication
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setGoogleModalOpen(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--w3)',
+                  fontSize: '1.25rem',
+                  cursor: 'pointer',
+                  padding: '0.2rem',
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <p style={{ color: 'var(--w2)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '1.5rem' }}>
+              To authenticate your account directly with Google, enter your Google OAuth 2.0 Client ID (from Google Cloud Console):
+            </p>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!googleClientIdInput.trim()) return;
+                setGoogleModalOpen(false);
+                executeGoogleAuth(googleClientIdInput.trim());
+              }}
+            >
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={labelStyle}>Google OAuth 2.0 Client ID</label>
+                <input
+                  value={googleClientIdInput}
+                  onChange={(e) => setGoogleClientIdInput(e.target.value)}
+                  placeholder="e.g. 1234567890-xxx.apps.googleusercontent.com"
+                  required
+                  style={inputStyle}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  onClick={() => setGoogleModalOpen(false)}
+                  className="pill-ghost"
+                  style={{ padding: '10px 18px', fontSize: '0.875rem' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="pill"
+                  style={{ padding: '10px 22px', fontSize: '0.875rem' }}
+                >
+                  Authenticate with Google
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* QR Scanner Modal */}
       <QRScannerModal isOpen={qrScannerOpen} onClose={() => setQrScannerOpen(false)} />

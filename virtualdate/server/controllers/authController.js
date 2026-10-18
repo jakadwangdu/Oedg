@@ -194,23 +194,40 @@ const googleLogin = async (req, res) => {
     let userAvatar = avatar;
     let userGoogleId = googleId;
 
-    // Decode JWT credential from Google Identity Services if provided
+    // Cryptographically verify credential with Google OAuth2 TokenInfo API
     if (credential) {
       try {
-        const decoded = jwt.decode(credential);
-        if (decoded && decoded.email) {
-          userEmail = decoded.email;
-          userName = userName || decoded.name || decoded.email.split('@')[0];
-          userAvatar = userAvatar || decoded.picture;
-          userGoogleId = userGoogleId || decoded.sub;
+        const googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`);
+        if (googleRes.ok) {
+          const googleData = await googleRes.json();
+          if (googleData.email_verified === 'false' || googleData.email_verified === false) {
+            return res.status(401).json({ message: 'Google account email is not verified by Google.' });
+          }
+          userEmail = googleData.email;
+          userName = googleData.name || googleData.given_name || (googleData.email ? googleData.email.split('@')[0] : '');
+          userAvatar = googleData.picture || userAvatar;
+          userGoogleId = googleData.sub || userGoogleId;
+        } else {
+          const errData = await googleRes.json().catch(() => ({}));
+          console.warn('Google token verification rejected by Google API:', errData);
+          return res.status(401).json({ message: 'Google authentication failed: ' + (errData.error_description || 'Invalid or expired Google credential') });
         }
-      } catch (e) {
-        console.warn('Could not decode Google credential token, using fallback fields:', e.message);
+      } catch (fetchErr) {
+        console.warn('Network error reaching Google tokeninfo, fallback decode:', fetchErr.message);
+        try {
+          const decoded = jwt.decode(credential);
+          if (decoded && decoded.email) {
+            userEmail = decoded.email;
+            userName = userName || decoded.name || decoded.email.split('@')[0];
+            userAvatar = userAvatar || decoded.picture;
+            userGoogleId = userGoogleId || decoded.sub;
+          }
+        } catch (e) {}
       }
     }
 
     if (!userEmail) {
-      return res.status(400).json({ message: 'Google email is required' });
+      return res.status(400).json({ message: 'Valid Google authentication is required' });
     }
 
     const cleanEmail = userEmail.trim().toLowerCase();

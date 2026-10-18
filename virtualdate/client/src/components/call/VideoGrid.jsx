@@ -66,6 +66,20 @@ export default function VideoGrid({ roomId }) {
     };
   }, []);
 
+  // Continuously ensure active stream (camera or screen share) is attached and playing
+  useEffect(() => {
+    const activeStream = isScreenSharing && screenStreamRef.current
+      ? screenStreamRef.current
+      : localStreamRef.current;
+
+    if (localVideoRef.current && activeStream) {
+      if (localVideoRef.current.srcObject !== activeStream) {
+        localVideoRef.current.srcObject = activeStream;
+      }
+      localVideoRef.current.play().catch(() => {});
+    }
+  }, [inCall, cameraOff, isAudioOnly, isScreenSharing]);
+
   // WebRTC Signaling Listeners
   useEffect(() => {
     const socket = getSocket();
@@ -246,49 +260,69 @@ export default function VideoGrid({ roomId }) {
     }
   };
 
-  // Start call as caller
-  const startCall = async (audioOnly = false) => {
+  // Start call as caller (supports video call, voice-only, or direct screen share)
+  const startCall = async (audioOnly = false, startWithScreen = false) => {
     setConnecting(true);
     setErrorMessage('');
     setIsAudioOnly(audioOnly);
 
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setErrorMessage('Camera and microphone require HTTPS or localhost connection.');
+    if (!navigator.mediaDevices || (!navigator.mediaDevices.getUserMedia && !navigator.mediaDevices.getDisplayMedia)) {
+      setErrorMessage('Media devices require HTTPS or localhost connection.');
       setConnecting(false);
       return;
     }
 
     try {
-      let stream;
+      let stream = null;
+      let screenStream = null;
+
+      // 1. If starting with screen share, request display media
+      if (startWithScreen) {
+        if (!navigator.mediaDevices.getDisplayMedia) {
+          throw new Error('Screen sharing is not supported by your browser.');
+        }
+        screenStream = await navigator.mediaDevices.getDisplayMedia({
+          video: { cursor: 'always' },
+          audio: false,
+        });
+        screenStreamRef.current = screenStream;
+        setIsScreenSharing(true);
+
+        const screenTrack = screenStream.getVideoTracks()[0];
+        screenTrack.onended = () => {
+          stopScreenShare();
+        };
+      }
+
+      // 2. Request user media (audio + camera)
       try {
         stream = await navigator.mediaDevices.getUserMedia({
-          video: !audioOnly ? { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' } : false,
+          video: !audioOnly && !startWithScreen ? { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' } : false,
           audio: { echoCancellation: true, noiseSuppression: true },
         });
       } catch (mediaErr) {
-        if (!audioOnly) {
+        if (!audioOnly && !startWithScreen) {
           stream = await navigator.mediaDevices.getUserMedia({
             video: false,
             audio: { echoCancellation: true, noiseSuppression: true },
           });
           setIsAudioOnly(true);
           setErrorMessage('Camera unavailable (switched to voice-only mode).');
+        } else if (startWithScreen) {
+          console.warn('Microphone error during screen share, continuing:', mediaErr.message);
         } else {
           throw mediaErr;
         }
       }
 
       localStreamRef.current = stream;
-      if (localVideoRef.current && !audioOnly) {
-        localVideoRef.current.srcObject = stream;
-        localVideoRef.current.play().catch(() => {});
-      }
-
       setInCall(true);
 
       const socket = getSocket();
-      // Ring partner
       socket?.emit('webrtc:call_user', { roomId, isAudioOnly: audioOnly });
+      if (startWithScreen) {
+        socket?.emit('webrtc:screen_status', { roomId, isScreenSharing: true });
+      }
 
       // Determine target socket ID
       const otherParticipant = participants.find((p) => p.userId !== user?._id);
@@ -297,6 +331,16 @@ export default function VideoGrid({ roomId }) {
 
       // Create offer
       const pc = createPeerConnection(targetSocketId);
+      if (startWithScreen && screenStream) {
+        const screenTrack = screenStream.getVideoTracks()[0];
+        const sender = pc.getSenders().find((s) => s.track && s.track.kind === 'video');
+        if (sender) {
+          sender.replaceTrack(screenTrack);
+        } else {
+          pc.addTrack(screenTrack, screenStream);
+        }
+      }
+
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
 
@@ -308,13 +352,14 @@ export default function VideoGrid({ roomId }) {
     } catch (err) {
       console.error('Call initiation error:', err);
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-        setErrorMessage('Camera or microphone permission was denied. Please allow camera/mic access in your browser settings.');
+        setErrorMessage('Permission was denied. Please allow camera, microphone, or screen access.');
       } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-        setErrorMessage('No camera or microphone found on this device.');
+        setErrorMessage('Required media device not found on this device.');
       } else {
         setErrorMessage('Failed to start call: ' + err.message);
       }
       setInCall(false);
+      setIsScreenSharing(false);
     } finally {
       setConnecting(false);
     }
@@ -343,11 +388,6 @@ export default function VideoGrid({ roomId }) {
       }
 
       localStreamRef.current = stream;
-      if (localVideoRef.current && !audioOnly) {
-        localVideoRef.current.srcObject = stream;
-        localVideoRef.current.play().catch(() => {});
-      }
-
       setInCall(true);
 
       if (pendingOfferRef.current) {
@@ -750,9 +790,9 @@ export default function VideoGrid({ roomId }) {
         {/* Start / Leave Call Button */}
         <div>
           {!inCall ? (
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
               <button
-                onClick={() => startCall(false)}
+                onClick={() => startCall(false, false)}
                 disabled={connecting}
                 className="btn-dimension-primary"
                 style={{
@@ -764,7 +804,28 @@ export default function VideoGrid({ roomId }) {
                 <span>{connecting ? 'Connecting...' : 'Start Video Call'}</span>
               </button>
               <button
-                onClick={() => startCall(true)}
+                onClick={() => startCall(false, true)}
+                disabled={connecting}
+                style={{
+                  padding: '0.5rem 1.1rem',
+                  borderRadius: 'var(--radius-pill)',
+                  background: '#1a1a1a',
+                  border: '1px solid var(--color-hairline)',
+                  color: 'var(--color-bone)',
+                  fontSize: '0.8125rem',
+                  fontWeight: 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  cursor: 'pointer',
+                }}
+                title="Share your screen directly with partner"
+              >
+                <span>🖥️</span>
+                <span>Share Screen</span>
+              </button>
+              <button
+                onClick={() => startCall(true, false)}
                 disabled={connecting}
                 style={{
                   padding: '0.5rem 1rem',
@@ -848,19 +909,112 @@ export default function VideoGrid({ roomId }) {
             justifyContent: 'center',
           }}
         >
-          {inCall && !isAudioOnly && !cameraOff ? (
-            <video
-              ref={localVideoRef}
-              autoPlay
-              playsInline
-              muted
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: isScreenSharing ? 'contain' : 'cover',
-                transform: isScreenSharing ? 'none' : 'scaleX(-1)', // Mirror camera only
-              }}
-            />
+          {inCall && ((!isAudioOnly && !cameraOff) || isScreenSharing) ? (
+            <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <video
+                ref={(el) => {
+                  localVideoRef.current = el;
+                  const activeStream = isScreenSharing && screenStreamRef.current
+                    ? screenStreamRef.current
+                    : localStreamRef.current;
+                  if (el && activeStream && el.srcObject !== activeStream) {
+                    el.srcObject = activeStream;
+                    el.play().catch(() => {});
+                  }
+                }}
+                autoPlay
+                playsInline
+                muted
+                onLoadedMetadata={(e) => {
+                  e.target.play().catch(() => {});
+                }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: isScreenSharing ? 'contain' : 'cover',
+                  transform: isScreenSharing ? 'none' : 'scaleX(-1)', // Mirror camera only
+                }}
+              />
+
+              {/* Floating Live Screen Sharing Badge */}
+              {isScreenSharing && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    left: 12,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: 'var(--radius-pill)',
+                    background: 'rgba(22, 22, 22, 0.85)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid var(--color-hairline)',
+                    color: 'var(--color-bone)',
+                    fontSize: '0.75rem',
+                    fontFamily: 'var(--font-mono)',
+                    zIndex: 10,
+                  }}
+                >
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80' }} />
+                  <span>Your Screen (Live Preview)</span>
+                </div>
+              )}
+
+              {/* Picture-in-Picture Camera Thumbnail when user is sharing screen */}
+              {isScreenSharing && !cameraOff && !isAudioOnly && localStreamRef.current && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: 48,
+                    right: 12,
+                    width: 140,
+                    height: 90,
+                    borderRadius: 12,
+                    overflow: 'hidden',
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    background: '#0a0a0a',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.8)',
+                    zIndex: 15,
+                  }}
+                  title="Your camera preview"
+                >
+                  <video
+                    ref={(el) => {
+                      if (el && localStreamRef.current && el.srcObject !== localStreamRef.current) {
+                        el.srcObject = localStreamRef.current;
+                        el.play().catch(() => {});
+                      }
+                    }}
+                    autoPlay
+                    playsInline
+                    muted
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transform: 'scaleX(-1)',
+                    }}
+                  />
+                  <span
+                    style={{
+                      position: 'absolute',
+                      bottom: 4,
+                      left: 6,
+                      fontSize: '0.625rem',
+                      color: 'var(--color-bone)',
+                      background: 'rgba(0,0,0,0.65)',
+                      padding: '1px 5px',
+                      borderRadius: 4,
+                      fontFamily: 'var(--font-mono)',
+                    }}
+                  >
+                    Camera
+                  </span>
+                </div>
+              )}
+            </div>
           ) : (
             <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--color-slate)' }}>
               <div style={{
@@ -935,9 +1089,9 @@ export default function VideoGrid({ roomId }) {
               gap: '0.35rem',
             }}>
               <span>You</span>
-              {isScreenSharing && <span style={{ color: 'var(--accent-violet)' }}>🖥️ Screen</span>}
+              {isScreenSharing && <span style={{ color: 'var(--accent-violet)' }}>🖥️ Screen (Sharing)</span>}
               {micMuted && <span>🔇</span>}
-              {cameraOff && <span>🚫</span>}
+              {cameraOff && !isScreenSharing && <span>🚫</span>}
             </div>
           )}
         </div>
