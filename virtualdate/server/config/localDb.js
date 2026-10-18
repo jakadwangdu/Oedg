@@ -199,7 +199,7 @@ const LocalDb = {
     const orders = readJSON(ORDERS_FILE);
     const newOrder = {
       _id: 'ord_' + uuidv4(),
-      amount: 4500,
+      amount: 1,
       currency: 'INR',
       status: 'PENDING',
       transferStatus: 'PENDING_TRANSFER',

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import QRCode from 'qrcode';
 import api from '../../services/api';
 
-const PRICE_INR = 4500; // 4.5K INR
+const PRICE_INR = 1; // 1 Re test payment
 
 export default function YoupiCheckoutModal({ isOpen, onClose }) {
   // Steps: 'confirm' -> 'phone' -> 'pay' -> 'success'
@@ -253,10 +253,10 @@ export default function YoupiCheckoutModal({ isOpen, onClose }) {
             >
               <div>
                 <div style={{ fontSize: '0.8125rem', color: 'var(--w3)', marginBottom: '0.2rem' }}>
-                  Total Purchase Price
+                  Total Purchase Price (Test Mode)
                 </div>
                 <div style={{ fontSize: '2rem', fontWeight: 600, color: 'var(--w)' }}>
-                  ₹4,500 <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--w2)' }}>(4.5K INR)</span>
+                  ₹1 <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--w2)' }}>(1 Re Test Payment)</span>
                 </div>
               </div>
               <div
@@ -302,7 +302,7 @@ export default function YoupiCheckoutModal({ isOpen, onClose }) {
                   fontWeight: 600,
                 }}
               >
-                Yes, Buy for ₹4,500 →
+                Yes, Buy for ₹1 (Test) →
               </button>
               <button
                 onClick={onClose}
@@ -434,7 +434,7 @@ export default function YoupiCheckoutModal({ isOpen, onClose }) {
                   opacity: loading ? 0.7 : 1,
                 }}
               >
-                {loading ? 'Setting up YouPI Payment...' : 'Proceed to Payment (₹4,500) →'}
+                {loading ? 'Setting up YouPI Payment...' : 'Proceed to Payment (₹1 Test) →'}
               </button>
             </form>
           </div>
@@ -629,7 +629,7 @@ export default function YoupiCheckoutModal({ isOpen, onClose }) {
               Acquisition Confirmed!
             </h2>
             <p style={{ color: 'var(--w2)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-              Payment of <strong style={{ color: 'var(--w)' }}>₹4,500 INR</strong> was received. Transfer of Oedg repository ownership and credentials has been queued for:
+              Payment of <strong style={{ color: 'var(--w)' }}>₹{order?.amount || 1} INR</strong> was received. Transfer of Oedg repository ownership and credentials has been queued for:
             </p>
 
             <div

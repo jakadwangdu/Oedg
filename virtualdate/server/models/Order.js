@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema({
   amount: {
     type: Number,
     required: true,
-    default: 4500, // 4.5K INR for website purchase
+    default: 1, // 1 Re test payment
   },
   currency: {
     type: String,

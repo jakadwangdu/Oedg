@@ -534,7 +534,7 @@ export default function DashboardPage() {
                 Receiving UPI: <strong style={{ color: 'var(--w)' }}>0001shaurya@fam</strong>
               </div>
               <div style={{ fontSize: '0.85rem', color: 'var(--w2)' }}>
-                Website Sale Price: <strong style={{ color: 'var(--w)' }}>₹4,500 (4.5K INR)</strong> &middot; 0% Platform Fees (P2P Direct Bank Settlement)
+                Website Sale Price: <strong style={{ color: 'var(--w)' }}>₹1 (1 Re Test Payment)</strong> &middot; 0% Platform Fees (P2P Direct Bank Settlement)
               </div>
             </div>
 

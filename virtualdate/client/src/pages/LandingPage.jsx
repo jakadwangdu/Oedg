@@ -64,7 +64,7 @@ export default function LandingPage() {
             }}
           >
             <span>🏷️</span>
-            <span>Buy Website (₹4.5K)</span>
+            <span>Buy Website (₹1 Test)</span>
           </button>
 
           <button
@@ -176,7 +176,7 @@ export default function LandingPage() {
                 color: 'var(--w)',
               }}
             >
-              🏷️ Buy Website (₹4.5K)
+              🏷️ Buy Website (₹1 Test)
             </button>
             {!user && (
               <Link to="/login" className="pill-ghost" style={{ fontSize: '1rem', padding: '14px 32px' }}>

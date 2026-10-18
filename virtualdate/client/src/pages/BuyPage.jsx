@@ -19,7 +19,7 @@ export default function BuyPage() {
     name: '',
     email: '',
     inquiryType: 'Full Source Code & IP Purchase',
-    budget: '₹4,500 (4.5K Fixed)',
+    budget: '$500 – $1,500',
     message: '',
   });
 
@@ -162,7 +162,7 @@ export default function BuyPage() {
           ))}
         </div>
 
-        {/* INSTANT ACQUISITION CARD: ₹4,500 (4.5K) via YouPI-PG */}
+        {/* INSTANT ACQUISITION CARD: ₹1 Test Mode via YouPI-PG */}
         <div
           style={{
             background: 'linear-gradient(180deg, var(--k2) 0%, var(--k1) 100%)',
@@ -195,7 +195,7 @@ export default function BuyPage() {
               marginBottom: '0.75rem',
             }}
           >
-            Buy this Website for ₹4,500
+            Buy this Website for ₹1 (Test Mode)
           </h2>
           <p
             style={{
@@ -229,7 +229,7 @@ export default function BuyPage() {
                 boxShadow: '0 10px 30px rgba(255, 255, 255, 0.15)',
               }}
             >
-              🏷️ Buy Website for ₹4,500 (4.5K) →
+              🏷️ Buy Website for ₹1 (Test Payment) →
             </button>
             <span style={{ fontSize: '0.85rem', color: 'var(--w3)' }}>
               🔒 Powered by YouPI-PG UPI Gateway &middot; Enter your phone number for direct handover

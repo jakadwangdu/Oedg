@@ -7,7 +7,7 @@ const LocalDb = require('../config/localDb');
 const isMongoActive = () => mongoose.connection.readyState === 1;
 
 /**
- * @desc    Create a YouPI-PG payment order for buying the website (4.5K INR)
+ * @desc    Create a YouPI-PG payment order for buying the website (1 Re Test / configurable)
  * @route   POST /api/payment/create-order
  */
 const createPaymentOrder = async (req, res) => {
@@ -24,7 +24,7 @@ const createPaymentOrder = async (req, res) => {
     }
 
     const orderId = `OEDG-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-    const amount = 4500; // 4.5K INR
+    const amount = Number(process.env.YOUPI_PRICE_INR) || 1; // 1 Re test payment
     const currency = 'INR';
 
     const upiVpa = process.env.YOUPI_UPI_VPA || '0001shaurya@fam';

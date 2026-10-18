@@ -73,7 +73,7 @@ export default function Footer() {
               }}
             >
               <span>🏷️</span>
-              <span>Buy this website (₹4.5K)</span>
+              <span>Buy this website (₹1 Test)</span>
             </Link>
             <Link
               to="/help"
