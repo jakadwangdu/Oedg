@@ -6,6 +6,7 @@ import Hero from '../components/Hero';
 import RoomShell from '../components/RoomShell';
 import FeatureTrack from '../components/FeatureTrack';
 import QRScannerModal from '../components/room/QRScannerModal';
+import Footer from '../components/Footer';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -154,31 +155,8 @@ export default function LandingPage() {
       {/* QR Code Camera / Image Scanner Modal */}
       <QRScannerModal isOpen={qrScannerOpen} onClose={() => setQrScannerOpen(false)} />
 
-      {/* Minimalist Footer */}
-      <footer
-        style={{
-          borderTop: '1px solid var(--line)',
-          padding: '2.5rem 2rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '1.5rem',
-          maxWidth: 1200,
-          margin: '0 auto',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <Logo size={20} word={true} />
-          <span className="mono" style={{ fontSize: 12, color: 'var(--w3)' }}>
-            A quiet space for two.
-          </span>
-        </div>
-
-        <div className="mono" style={{ fontSize: 12, color: 'var(--w3)' }}>
-          Direct peer encrypted link &middot; Geist typography
-        </div>
-      </footer>
+      {/* Production Footer */}
+      <Footer />
     </div>
   );
 }

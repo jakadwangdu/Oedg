@@ -16,19 +16,43 @@ const server = http.createServer(app);
 // Init Socket.IO
 initSocket(server);
 
-// Middleware
-app.use(cors({
-  origin: (origin, callback) => callback(null, true),
-  credentials: true,
-}));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+// Production Security Headers Middleware
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(self), microphone=(self), display-capture=(self)');
+  next();
+});
+
+// In-Memory IP Rate Limiter for Abuse Prevention
+const rateLimits = new Map();
+const rateLimiter = (maxRequests = 40, windowMs = 60000) => (req, res, next) => {
+  const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const entry = rateLimits.get(ip) || { count: 0, resetAt: now + windowMs };
+
+  if (now > entry.resetAt) {
+    entry.count = 1;
+    entry.resetAt = now + windowMs;
+  } else {
+    entry.count += 1;
+  }
+  rateLimits.set(ip, entry);
+
+  if (entry.count > maxRequests) {
+    return res.status(429).json({ message: 'Too many requests. Please pause and try again in a moment.' });
+  }
+  next();
+};
 
 // Routes
-app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/auth', rateLimiter(30, 60000), require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/rooms', require('./routes/roomRoutes'));
 app.use('/api/agora', require('./routes/agoraRoutes'));
+app.use('/api/inquiries', rateLimiter(15, 60000), require('./routes/inquiryRoutes'));
 
 // Health check
 app.get('/api/health', (req, res) => {

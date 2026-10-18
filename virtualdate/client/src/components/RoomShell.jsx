@@ -292,6 +292,7 @@ export default function RoomShell({ onEnterRoom }) {
 
             {/* Sliding Pill Tabs Bar */}
             <div
+              className="room-shell-tabs-bar"
               style={{
                 position: 'relative',
                 display: 'inline-flex',
@@ -349,7 +350,7 @@ export default function RoomShell({ onEnterRoom }) {
             ref={panelRef}
             style={{
               flex: 1,
-              padding: '2rem',
+              padding: 'clamp(1rem, 3.5vw, 2rem)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',

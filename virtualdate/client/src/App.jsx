@@ -7,6 +7,10 @@ import AuthPage from './pages/AuthPage';
 import DashboardPage from './pages/DashboardPage';
 import RoomPage from './pages/RoomPage';
 import ProfilePage from './pages/ProfilePage';
+import BuyPage from './pages/BuyPage';
+import HelpPage from './pages/HelpPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuthStore();
@@ -45,6 +49,10 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/buy" element={<BuyPage />} />
+        <Route path="/help" element={<HelpPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

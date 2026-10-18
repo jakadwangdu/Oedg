@@ -54,6 +54,7 @@ function Card({ f, index }) {
       ref={cardRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
+      className="feature-track-card"
       style={{
         width: 'min(78vw, 520px)',
         height: 'min(56vh, 440px)',
@@ -246,6 +247,7 @@ export default function FeatureTrack() {
 
       <div
         ref={track}
+        className="feature-track-container"
         style={{
           display: 'flex',
           gap: '2rem',

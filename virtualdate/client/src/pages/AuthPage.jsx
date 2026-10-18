@@ -8,7 +8,7 @@ import QRScannerModal from '../components/room/QRScannerModal';
 export default function AuthPage({ mode = 'login' }) {
   const isRegister = mode === 'register';
   const navigate = useNavigate();
-  const { login, register, googleLogin, loading, error } = useAuthStore();
+  const { login, register, googleLogin, guestLogin, loading, error } = useAuthStore();
 
   const [form, setForm] = useState({ username: '', email: '', password: '' });
   const [localError, setLocalError] = useState('');
@@ -121,6 +121,13 @@ export default function AuthPage({ mode = 'login' }) {
     } else {
       setGoogleModalOpen(true);
     }
+  };
+
+  const handleGuestSignIn = async () => {
+    setLocalError('');
+    const res = await guestLogin();
+    if (res.success) navigate('/dashboard');
+    else setLocalError(res.error);
   };
 
   const handleSubmit = async (e) => {

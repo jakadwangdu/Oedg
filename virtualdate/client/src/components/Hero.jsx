@@ -136,7 +136,7 @@ export default function Hero({ onStart, onScanQR }) {
           Watch together, listen together, draw together. No accounts, no noise. Just the two of you, after dark.
         </p>
 
-        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div className="hero-actions-container" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
           <button
             className="pill hero-cta"
             onClick={onStart}

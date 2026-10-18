@@ -177,6 +177,21 @@ const LocalDb = {
     const messages = readJSON(MESSAGES_FILE);
     return messages.filter((m) => m.roomId === roomId).slice(-100);
   },
+
+  // INQUIRIES (Buy website & Help requests)
+  createInquiry: (inquiryData) => {
+    const INQUIRIES_FILE = path.join(DATA_DIR, 'inquiries.json');
+    const inquiries = readJSON(INQUIRIES_FILE);
+    const newInquiry = {
+      _id: 'inq_' + uuidv4(),
+      ...inquiryData,
+      status: 'new',
+      createdAt: new Date().toISOString(),
+    };
+    inquiries.push(newInquiry);
+    writeJSON(INQUIRIES_FILE, inquiries);
+    return newInquiry;
+  },
 };
 
 module.exports = LocalDb;
