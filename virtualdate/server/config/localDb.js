@@ -95,14 +95,14 @@ const LocalDb = {
   createGuestUser: (customName) => {
     const users = readJSON(USERS_FILE);
     const randomNum = Math.floor(1000 + Math.random() * 9000);
-    const username = customName && customName.trim() ? customName.trim() : `DateGuest_${randomNum}`;
+    const username = customName && customName.trim() ? customName.trim() : `Guest_${randomNum}`;
     const newGuest = {
       _id: 'guest_' + uuidv4(),
       username,
-      email: `guest_${randomNum}@virtualdate.local`,
+      email: `guest_${randomNum}@oedg.local`,
       isGuest: true,
       avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(username)}`,
-      bio: 'Romantic date night guest ✨',
+      bio: 'Productive workspace guest ✦',
       createdAt: new Date().toISOString(),
     };
     users.push(newGuest);
@@ -191,46 +191,6 @@ const LocalDb = {
     inquiries.push(newInquiry);
     writeJSON(INQUIRIES_FILE, inquiries);
     return newInquiry;
-  },
-
-  // ORDERS (YouPI-PG Website Purchases)
-  createOrder: (orderData) => {
-    const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
-    const orders = readJSON(ORDERS_FILE);
-    const newOrder = {
-      _id: 'ord_' + uuidv4(),
-      amount: 1,
-      currency: 'INR',
-      status: 'PENDING',
-      transferStatus: 'PENDING_TRANSFER',
-      paymentGateway: 'YouPI-PG',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      ...orderData,
-    };
-    orders.push(newOrder);
-    writeJSON(ORDERS_FILE, orders);
-    return newOrder;
-  },
-
-  findOrder: (orderId) => {
-    const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
-    const orders = readJSON(ORDERS_FILE);
-    return orders.find((o) => o.orderId === orderId);
-  },
-
-  updateOrder: (orderId, updates) => {
-    const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
-    const orders = readJSON(ORDERS_FILE);
-    const idx = orders.findIndex((o) => o.orderId === orderId);
-    if (idx === -1) return null;
-    orders[idx] = {
-      ...orders[idx],
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    };
-    writeJSON(ORDERS_FILE, orders);
-    return orders[idx];
   },
 };
 

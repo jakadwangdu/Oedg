@@ -30,7 +30,7 @@ export default function ParticipantList({ participants = [], roomId, roomName })
             color: 'var(--color-bone)',
             letterSpacing: '-0.02em',
           }}>
-            {roomName || 'Date Sanctuary'}
+            {roomName || 'Meeting Room'}
           </h2>
           <span style={{ fontSize: '0.75rem', color: 'var(--color-slate)', fontFamily: 'var(--font-mono)' }}>
             ID: {roomId}

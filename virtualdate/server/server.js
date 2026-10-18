@@ -61,7 +61,6 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/rooms', require('./routes/roomRoutes'));
 app.use('/api/agora', require('./routes/agoraRoutes'));
 app.use('/api/inquiries', rateLimiter(15, 60000), require('./routes/inquiryRoutes'));
-app.use('/api/payment', rateLimiter(25, 60000), require('./routes/paymentRoutes'));
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -78,5 +77,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`🚀 VirtualDate server running on port ${PORT}`);
+  console.log(`🚀 Oedg server running on port ${PORT}`);
 });

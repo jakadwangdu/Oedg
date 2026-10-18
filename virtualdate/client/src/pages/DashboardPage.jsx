@@ -18,10 +18,9 @@ export default function DashboardPage() {
   const [copiedId, setCopiedId] = useState(null);
   const [qrModalRoom, setQrModalRoom] = useState(null);
   const [qrScannerOpen, setQrScannerOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('rooms'); // 'rooms' | 'orders'
-  const [orders, setOrders] = useState([]);
+  const [activeTab, setActiveTab] = useState('rooms'); // 'rooms' | 'support'
   const [inquiries, setInquiries] = useState([]);
-  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [loadingInquiries, setLoadingInquiries] = useState(false);
 
   const fetchRooms = async () => {
     try {
@@ -34,25 +33,21 @@ export default function DashboardPage() {
     }
   };
 
-  const fetchOrdersAndInquiries = async () => {
-    setLoadingOrders(true);
+  const fetchInquiries = async () => {
+    setLoadingInquiries(true);
     try {
-      const [ordersRes, inqRes] = await Promise.all([
-        api.get('/payment/orders').catch(() => ({ data: [] })),
-        api.get('/inquiries/all').catch(() => ({ data: [] })),
-      ]);
-      setOrders(ordersRes.data || []);
+      const inqRes = await api.get('/inquiries/all').catch(() => ({ data: [] }));
       setInquiries(inqRes.data || []);
     } catch (e) {
       console.error(e);
     } finally {
-      setLoadingOrders(false);
+      setLoadingInquiries(false);
     }
   };
 
   useEffect(() => {
     fetchRooms();
-    fetchOrdersAndInquiries();
+    fetchInquiries();
   }, []);
 
   const handleCreate = async (e) => {
@@ -194,17 +189,17 @@ export default function DashboardPage() {
             transition: 'all 0.2s',
           }}
         >
-          Rooms ({rooms.length})
+          Workspaces ({rooms.length})
         </button>
         <button
           onClick={() => {
-            setActiveTab('orders');
-            fetchOrdersAndInquiries();
+            setActiveTab('support');
+            fetchInquiries();
           }}
           style={{
-            background: activeTab === 'orders' ? 'var(--k2)' : 'transparent',
-            border: activeTab === 'orders' ? '1px solid var(--line)' : '1px solid transparent',
-            color: activeTab === 'orders' ? 'var(--w)' : 'var(--w3)',
+            background: activeTab === 'support' ? 'var(--k2)' : 'transparent',
+            border: activeTab === 'support' ? '1px solid var(--line)' : '1px solid transparent',
+            color: activeTab === 'support' ? 'var(--w)' : 'var(--w3)',
             fontSize: '0.9375rem',
             fontWeight: 500,
             cursor: 'pointer',
@@ -216,9 +211,9 @@ export default function DashboardPage() {
             gap: '0.5rem',
           }}
         >
-          <span>🏷️</span>
-          <span>Website Orders & Inquiries</span>
-          {orders.length > 0 && (
+          <span>💬</span>
+          <span>Help & Support Tickets</span>
+          {inquiries.length > 0 && (
             <span
               style={{
                 background: 'var(--w)',
@@ -229,7 +224,7 @@ export default function DashboardPage() {
                 fontWeight: 600,
               }}
             >
-              {orders.length}
+              {inquiries.length}
             </span>
           )}
         </button>
@@ -251,7 +246,7 @@ export default function DashboardPage() {
         >
           <div>
             <div className="mono" style={{ fontSize: 12, color: 'var(--w3)', marginBottom: '0.35rem' }}>
-              SANCTUARIES
+              WORKSPACES
             </div>
             <h2
               style={{
@@ -261,7 +256,7 @@ export default function DashboardPage() {
                 letterSpacing: '-0.04em',
               }}
             >
-              Your rooms
+              Your meeting rooms
             </h2>
           </div>
 
@@ -304,7 +299,7 @@ export default function DashboardPage() {
               <input
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
-                placeholder="Room name (e.g. Midnight Cinema with Her)"
+                placeholder="Room name (e.g. Product Architecture Sprint, Weekly Standup)"
                 required
                 style={{
                   flex: 2,
@@ -368,7 +363,7 @@ export default function DashboardPage() {
               borderRadius: 24,
             }}
           >
-            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>☾</div>
+            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>✦</div>
             <h3
               style={{
                 fontSize: '1.35rem',
@@ -383,12 +378,12 @@ export default function DashboardPage() {
               style={{
                 color: 'var(--w2)',
                 fontSize: '0.9rem',
-                maxWidth: 400,
+                maxWidth: 440,
                 margin: '0 auto 2rem',
                 lineHeight: 1.5,
               }}
             >
-              Create your first private room above. Share the link or QR code with your partner to start watching cinema or drawing in real time.
+              Create your first quiet workspace above. Share the link or QR code with your team or clients to run focused meetings, brainstorm on canvas, and collaborate in real time.
             </p>
             <button onClick={() => setShowCreate(true)} className="pill">
               + Create a room
@@ -508,268 +503,98 @@ export default function DashboardPage() {
       </div>
       )}
 
-      {/* TAB 2: ORDERS & INQUIRIES VIEW */}
-      {activeTab === 'orders' && (
+      {/* TAB 2: HELP & SUPPORT TICKETS VIEW */}
+      {activeTab === 'support' && (
         <div>
-          {/* Top Info Bar: UPI Receiving Account Details */}
-          <div
-            style={{
-              background: 'var(--k1)',
-              border: '1px solid var(--line)',
-              borderRadius: 20,
-              padding: '1.5rem',
-              marginBottom: '2.5rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '1.25rem',
-            }}
-          >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
-              <div className="mono" style={{ fontSize: 11, color: 'var(--w3)', letterSpacing: '0.06em', marginBottom: '0.3rem' }}>
-                YOUPI-PG SOVEREIGN RECEIVING ACCOUNT
-              </div>
-              <div style={{ fontSize: '1.25rem', fontWeight: 500, color: 'var(--w)', marginBottom: '0.25rem' }}>
-                Receiving UPI: <strong style={{ color: 'var(--w)' }}>0001shaurya@fam</strong>
-              </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--w2)' }}>
-                Website Sale Price: <strong style={{ color: 'var(--w)' }}>₹1 (1 Re Test Payment)</strong> &middot; 0% Platform Fees (P2P Direct Bank Settlement)
-              </div>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 500, color: 'var(--w)', marginBottom: '0.35rem' }}>
+                User Support Tickets ({inquiries.length})
+              </h3>
+              <p style={{ color: 'var(--w2)', fontSize: '0.875rem', margin: 0 }}>
+                Questions and assistance requests submitted via the help portal.
+              </p>
             </div>
-
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-              <button
-                onClick={fetchOrdersAndInquiries}
-                className="pill-ghost"
-                style={{ padding: '8px 16px', fontSize: 12, cursor: 'pointer' }}
-              >
-                {loadingOrders ? 'Refreshing...' : '🔄 Refresh Data'}
-              </button>
-            </div>
+            <button
+              onClick={fetchInquiries}
+              className="pill-ghost"
+              style={{ padding: '8px 16px', fontSize: 12, cursor: 'pointer' }}
+            >
+              {loadingInquiries ? 'Refreshing...' : '🔄 Refresh Tickets'}
+            </button>
           </div>
 
-          {/* Section 1: Orders (Purchases) */}
-          <div style={{ marginBottom: '3.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <div>
-                <h3 style={{ fontSize: '1.4rem', fontWeight: 500, color: 'var(--w)' }}>
-                  Website Purchase Orders ({orders.length})
-                </h3>
-                <p style={{ color: 'var(--w2)', fontSize: '0.875rem', margin: 0 }}>
-                  Buyers who initiated or completed checkout for the Oedg website.
-                </p>
-              </div>
+          {loadingInquiries ? (
+            <div style={{ color: 'var(--w3)', textAlign: 'center', padding: '3rem 0' }}>
+              Loading tickets...
             </div>
-
-            {loadingOrders ? (
-              <div style={{ color: 'var(--w3)', textAlign: 'center', padding: '3rem 0' }}>
-                Loading orders...
-              </div>
-            ) : orders.length === 0 ? (
-              <div
-                style={{
-                  background: 'var(--k1)',
-                  border: '1px solid var(--line)',
-                  borderRadius: 20,
-                  padding: '3rem 1.5rem',
-                  textAlign: 'center',
-                }}
-              >
-                <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🏷️</div>
-                <h4 style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--w)', marginBottom: '0.5rem' }}>
-                  No website purchases yet
-                </h4>
-                <p style={{ color: 'var(--w3)', fontSize: '0.875rem', maxWidth: 460, margin: '0 auto' }}>
-                  When someone buys the website for ₹4,500 via YouPI-PG at /buy, their phone number and payment reference will appear here immediately for transfer.
-                </p>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {orders.map((ord) => {
-                  const cleanPhone = (ord.buyerPhone || '').replace(/\D/g, '');
-                  const isPaid = ord.status === 'SUCCESS';
-                  const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-                    `Hi! Thank you for purchasing Oedg (Order: ${ord.orderId}). Here is your GitHub repository transfer link and administrative handover details.`
-                  )}`;
-
-                  return (
-                    <div
-                      key={ord._id || ord.orderId}
+          ) : inquiries.length === 0 ? (
+            <div
+              style={{
+                background: 'var(--k1)',
+                border: '1px solid var(--line)',
+                borderRadius: 20,
+                padding: '3rem 1.5rem',
+                textAlign: 'center',
+                color: 'var(--w3)',
+                fontSize: '0.875rem',
+              }}
+            >
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💬</div>
+              <h4 style={{ fontSize: '1.05rem', fontWeight: 500, color: 'var(--w)', marginBottom: '0.25rem' }}>
+                No support tickets yet
+              </h4>
+              <p style={{ color: 'var(--w3)', fontSize: '0.85rem', margin: 0 }}>
+                When users or team members submit a help ticket, it will appear here.
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {inquiries.map((inq) => (
+                <div
+                  key={inq._id}
+                  style={{
+                    background: 'var(--k1)',
+                    border: '1px solid var(--line)',
+                    borderRadius: 16,
+                    padding: '1.25rem 1.5rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <span
+                      className="mono"
                       style={{
-                        background: 'var(--k1)',
-                        border: `1px solid ${isPaid ? 'rgba(74, 222, 128, 0.4)' : 'var(--line)'}`,
-                        borderRadius: 18,
-                        padding: '1.5rem',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '1rem',
+                        fontSize: 11,
+                        padding: '2px 8px',
+                        borderRadius: 999,
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'var(--w)',
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-                        <div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
-                            <span
-                              style={{
-                                padding: '3px 10px',
-                                borderRadius: 999,
-                                fontSize: '0.75rem',
-                                fontWeight: 600,
-                                background: isPaid ? 'rgba(74, 222, 128, 0.15)' : 'rgba(234, 179, 8, 0.15)',
-                                color: isPaid ? '#4ade80' : '#eab308',
-                                border: `1px solid ${isPaid ? 'rgba(74, 222, 128, 0.3)' : 'rgba(234, 179, 8, 0.3)'}`,
-                              }}
-                            >
-                              {isPaid ? '✓ PAID ₹4,500' : '⏳ PENDING PAYMENT'}
-                            </span>
-                            <span className="mono" style={{ fontSize: 12, color: 'var(--w3)' }}>
-                              Ref: {ord.orderId}
-                            </span>
-                          </div>
-
-                          <div style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--w)', marginTop: '0.2rem' }}>
-                            📱 Buyer Phone: {ord.buyerPhone}
-                          </div>
-                          {ord.buyerName && (
-                            <div style={{ fontSize: '0.875rem', color: 'var(--w2)', marginTop: '0.2rem' }}>
-                              Name: {ord.buyerName} {ord.buyerEmail && `(${ord.buyerEmail})`}
-                            </div>
-                          )}
-                          {ord.utr && (
-                            <div className="mono" style={{ fontSize: 12, color: 'var(--w2)', marginTop: '0.25rem' }}>
-                              UTR / Bank Ref: <strong style={{ color: 'var(--w)' }}>{ord.utr}</strong>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Action buttons */}
-                        <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
-                          <a
-                            href={waUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="pill"
-                            style={{
-                              fontSize: 12,
-                              padding: '8px 18px',
-                              background: '#25D366',
-                              color: '#fff',
-                              textDecoration: 'none',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.4rem',
-                            }}
-                          >
-                            <span>WhatsApp Buyer →</span>
-                          </a>
-                          <a
-                            href={`tel:${ord.buyerPhone}`}
-                            className="pill-ghost"
-                            style={{ fontSize: 12, padding: '8px 14px', textDecoration: 'none', color: 'var(--w)' }}
-                          >
-                            Call
-                          </a>
-                        </div>
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: 'var(--w3)',
-                          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-                          paddingTop: '0.75rem',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          flexWrap: 'wrap',
-                          gap: '0.5rem',
-                        }}
-                      >
-                        <span>Created: {new Date(ord.createdAt).toLocaleString()}</span>
-                        <span>Gateway: YouPI-PG &middot; Sovereign direct-to-bank settlement</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Section 2: Contact Form Inquiries & Support Tickets */}
-          <div>
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 500, color: 'var(--w)', marginBottom: '0.5rem' }}>
-              Acquisition & Support Inquiries ({inquiries.length})
-            </h3>
-            <p style={{ color: 'var(--w2)', fontSize: '0.875rem', marginBottom: '1.25rem' }}>
-              Messages submitted via the contact and help forms.
-            </p>
-
-            {inquiries.length === 0 ? (
-              <div
-                style={{
-                  background: 'var(--k1)',
-                  border: '1px solid var(--line)',
-                  borderRadius: 20,
-                  padding: '2.5rem 1.5rem',
-                  textAlign: 'center',
-                  color: 'var(--w3)',
-                  fontSize: '0.875rem',
-                }}
-              >
-                No form inquiries submitted yet.
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {inquiries.map((inq) => (
-                  <div
-                    key={inq._id}
-                    style={{
-                      background: 'var(--k1)',
-                      border: '1px solid var(--line)',
-                      borderRadius: 16,
-                      padding: '1.25rem 1.5rem',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                      <span
-                        className="mono"
-                        style={{
-                          fontSize: 11,
-                          padding: '2px 8px',
-                          borderRadius: 999,
-                          background: inq.type === 'buy' ? 'rgba(255,255,255,0.1)' : 'rgba(139, 92, 246, 0.15)',
-                          color: inq.type === 'buy' ? 'var(--w)' : '#a78bfa',
-                        }}
-                      >
-                        {inq.type === 'buy' ? 'ACQUISITION INQUIRY' : 'HELP TICKET'}
-                      </span>
-                      <span className="mono" style={{ fontSize: 11, color: 'var(--w3)' }}>
-                        {new Date(inq.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-
-                    <div style={{ fontWeight: 500, color: 'var(--w)', fontSize: '1rem', marginBottom: '0.25rem' }}>
-                      {inq.name} &lt;{inq.email}&gt;
-                    </div>
-
-                    {inq.category && (
-                      <div style={{ fontSize: '0.8125rem', color: 'var(--w3)', marginBottom: '0.5rem' }}>
-                        Category: {inq.category}
-                      </div>
-                    )}
-                    {inq.inquiryType && (
-                      <div style={{ fontSize: '0.8125rem', color: 'var(--w3)', marginBottom: '0.5rem' }}>
-                        Type: {inq.inquiryType} &middot; Budget: {inq.budget}
-                      </div>
-                    )}
-
-                    <p style={{ color: 'var(--w2)', fontSize: '0.875rem', lineHeight: 1.5, margin: 0 }}>
-                      "{inq.message}"
-                    </p>
+                      SUPPORT TICKET
+                    </span>
+                    <span className="mono" style={{ fontSize: 11, color: 'var(--w3)' }}>
+                      {new Date(inq.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+
+                  <div style={{ fontWeight: 500, color: 'var(--w)', fontSize: '1rem', marginBottom: '0.25rem' }}>
+                    {inq.name} &lt;{inq.email}&gt;
+                  </div>
+
+                  {inq.category && (
+                    <div style={{ fontSize: '0.8125rem', color: 'var(--w3)', marginBottom: '0.5rem' }}>
+                      Category: {inq.category}
+                    </div>
+                  )}
+
+                  <p style={{ color: 'var(--w2)', fontSize: '0.875rem', lineHeight: 1.5, margin: 0 }}>
+                    "{inq.message}"
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
       {qrModalRoom && (

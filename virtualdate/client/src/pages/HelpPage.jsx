@@ -23,19 +23,19 @@ export default function HelpPage() {
     },
     {
       q: 'How does Screen Share work on mobile and desktop?',
-      a: 'On desktop, click "Share Screen" in the Video Sanctuary. You can choose to share your entire screen, an application window, or a specific browser tab. Your live screen preview will appear immediately, with a Fullscreen toggle and optional camera picture-in-picture. On smartphones, screen sharing requires iOS 15.1+ or Android 10+ with browser screen capture support.',
+      a: 'On desktop, click "Share Screen" in the Video Workspace. You can choose to share your entire screen, an application window, or a specific browser tab. Your live screen preview will appear immediately, with a Fullscreen toggle and optional camera picture-in-picture. On smartphones, screen sharing requires iOS 15.1+ or Android 10+ with browser screen capture support.',
     },
     {
-      q: 'Can my partner enter a room without creating an account?',
-      a: 'Yes, completely! When you create a room, you can copy the room link or open the QR code. Your partner can scan the QR code directly from their phone camera or our website QR scanner, and they will immediately enter the sanctuary as an anonymous guest with full video, chat, cinema, and game access.',
+      q: 'Can team members enter a room without creating an account?',
+      a: 'Yes, completely! When you create a room, you can copy the room link or open the QR code. Attendees can scan the QR code directly from their phone camera or our website QR scanner, and they will immediately enter the workspace as an anonymous guest with full video, chat, presentation, and canvas access.',
     },
     {
-      q: 'How does Cinema and Music synchronization work?',
-      a: 'In the Watch tab, paste any YouTube link or direct video URL. When you hit play, pause, or seek to a different timestamp, Socket.IO broadcasts the action to your partner with millisecond precision, ensuring you are watching the exact same scene at the exact same moment.',
+      q: 'How does Presentation and Audio synchronization work?',
+      a: 'In the Present tab, paste any YouTube link or direct video URL. When you hit play, pause, or seek to a different timestamp, Socket.IO broadcasts the action to your team with millisecond precision, ensuring all attendees are viewing the exact same timestamp.',
     },
     {
       q: 'What should I do if I hear an audio echo or feedback?',
-      a: 'Echo occurs when your microphone picks up your speakers. To prevent echo, both you and your partner should use headphones or earbuds, or click "Mute" when not speaking. Oedg also has built-in WebRTC echo cancellation and noise suppression enabled automatically.',
+      a: 'Echo occurs when a microphone picks up speaker output. To prevent echo, attendees should use headphones or earbuds, or click "Mute" when not speaking. Oedg also has built-in WebRTC echo cancellation and noise suppression enabled automatically.',
     },
   ];
 
@@ -95,7 +95,7 @@ export default function HelpPage() {
           <Logo size={24} word={true} />
         </Link>
         <Link to="/" className="mono" style={{ color: 'var(--w2)', fontSize: 13, textDecoration: 'none' }}>
-          ← Back to sanctuary
+          ← Back to workspace
         </Link>
       </nav>
 
@@ -111,7 +111,7 @@ export default function HelpPage() {
               marginBottom: '1rem',
             }}
           >
-            SANCTUARY SUPPORT
+            WORKSPACE SUPPORT
           </div>
           <h1
             style={{

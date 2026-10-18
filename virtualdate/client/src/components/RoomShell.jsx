@@ -5,7 +5,7 @@ import Logo from './Logo';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const MONO_REACTIONS = ['♡', '✦', '☾', '❋', '◌', '✧'];
+const MONO_REACTIONS = ['✦', '⚡', '✓', '❋', '◌', '✧'];
 
 export default function RoomShell({ onEnterRoom }) {
   const frameRef = useRef(null);
@@ -21,7 +21,7 @@ export default function RoomShell({ onEnterRoom }) {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
 
-  // Sky tab constellation state
+  // Flow tab constellation/node state
   const [stars, setStars] = useState([
     { x: 120, y: 140, type: 'you' },
     { x: 220, y: 100, type: 'partner' },
@@ -29,15 +29,15 @@ export default function RoomShell({ onEnterRoom }) {
     { x: 420, y: 130, type: 'partner' },
   ]);
 
-  // Whispers state
+  // Notes state
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'partner', text: 'Listen to this track with me...' },
-    { id: 2, sender: 'you', text: 'Candlelight lofi is so peaceful tonight ♡' },
+    { id: 1, sender: 'partner', text: 'Sharing the sprint roadmap walkthrough now...' },
+    { id: 2, sender: 'you', text: 'Architecture targets are well defined. ✦' },
   ]);
   const [inputText, setInputText] = useState('');
   const [particles, setParticles] = useState([]);
 
-  const tabNames = ['Watch', 'Dhun', 'Canvas', 'Arcade', 'Sky'];
+  const tabNames = ['Present', 'Focus Audio', 'Canvas', 'Arcade', 'Flow'];
 
   // Frame scroll entrance scale effect
   useLayoutEffect(() => {
@@ -210,7 +210,7 @@ export default function RoomShell({ onEnterRoom }) {
             fontWeight: 500,
           }}
         >
-          Inside your dusk-lit sanctuary.
+          Inside your quiet productive space.
         </h2>
       </div>
 
@@ -286,7 +286,7 @@ export default function RoomShell({ onEnterRoom }) {
                 }}
               />
               <span className="mono" style={{ fontSize: 12, color: 'var(--w3)' }}>
-                room/candlelight
+                room/focus-sprint
               </span>
             </div>
 
@@ -402,11 +402,11 @@ export default function RoomShell({ onEnterRoom }) {
                       {isPlaying ? '⏸' : '▶'}
                     </div>
                     <span className="mono" style={{ fontSize: 13, color: 'var(--w2)' }}>
-                      Midnight in Paris &middot; 42:18 / 1:34:00
+                      Product Architecture Walkthrough &middot; 14:20 / 32:00
                     </span>
                   </div>
 
-                  {/* Partner outlined presence cursor tag */}
+                  {/* Teammate outlined presence cursor tag */}
                   <div
                     style={{
                       position: 'absolute',
@@ -432,7 +432,7 @@ export default function RoomShell({ onEnterRoom }) {
                         border: '1.5px solid var(--w)',
                       }}
                     />
-                    Partner watching
+                    Teammate viewing
                   </div>
                 </div>
 
@@ -507,13 +507,13 @@ export default function RoomShell({ onEnterRoom }) {
                 {/* Station selection */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10, minWidth: 240 }}>
                   <div className="mono" style={{ fontSize: 12, color: 'var(--w3)', marginBottom: 4 }}>
-                    DHUN STATIONS
+                    DEEP WORK & FOCUS AUDIO
                   </div>
                   {[
-                    'Midnight Candlelight Lofi',
-                    'Rain on Window Glass',
-                    'Starlight Romance Piano',
-                    'Parisian Velvet Evening',
+                    'Deep Work & Code Focus Lofi',
+                    'Rain & Window Glass Focus',
+                    'Alpha Waves Flow Piano',
+                    'Binaural Deep Focus Beats',
                   ].map((st, idx) => {
                     const isCur = activeStation === idx;
                     return (
@@ -605,7 +605,7 @@ export default function RoomShell({ onEnterRoom }) {
                   </div>
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                     <span style={{ fontSize: 11, color: 'var(--w3)', marginRight: 4 }}>You: solid</span>
-                    <span style={{ fontSize: 11, color: 'var(--w3)' }}>Partner: dotted</span>
+                    <span style={{ fontSize: 11, color: 'var(--w3)' }}>Teammate: dotted</span>
                   </div>
                 </div>
 
@@ -632,7 +632,7 @@ export default function RoomShell({ onEnterRoom }) {
             {activeTab === 3 && (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div className="mono" style={{ fontSize: 12, color: 'var(--w3)', marginBottom: '1rem' }}>
-                  TURN: {xIsNext ? 'YOU (X — Solid)' : 'PARTNER (O — Outlined)'}
+                  TURN: {xIsNext ? 'YOU (X — Solid)' : 'TEAM MEMBER (O — Outlined)'}
                 </div>
                 <div
                   style={{
@@ -704,10 +704,10 @@ export default function RoomShell({ onEnterRoom }) {
                   }}
                 >
                   <div className="mono" style={{ fontSize: 12, color: 'var(--w3)' }}>
-                    TAP SKY TO PLACE A STAR
+                    TAP FLOW TO PLACE A NODE
                   </div>
                   <span style={{ fontSize: 11, color: 'var(--w2)' }}>
-                    You = solid light &middot; Partner answers in outline
+                    You = solid light &middot; Teammate answers in outline
                   </span>
                 </div>
 
@@ -747,7 +747,7 @@ export default function RoomShell({ onEnterRoom }) {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: 290px Sidebar (Whisper Notes & Monochrome Reactions) */}
+        {/* RIGHT COLUMN: 290px Sidebar (Team Notes & Monochrome Reactions) */}
         <div
           style={{
             display: 'flex',
@@ -771,7 +771,7 @@ export default function RoomShell({ onEnterRoom }) {
                 alignItems: 'center',
               }}
             >
-              <span>WHISPERS</span>
+              <span>TEAM CHAT</span>
               <span>2 online</span>
             </div>
 
@@ -846,7 +846,7 @@ export default function RoomShell({ onEnterRoom }) {
               <input
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="Whisper something..."
+                placeholder="Send a note or message..."
                 style={{
                   flex: 1,
                   background: 'var(--k2)',
@@ -878,10 +878,10 @@ export default function RoomShell({ onEnterRoom }) {
         </div>
       </div>
 
-      {/* Button to enter actual date */}
+      {/* Button to enter actual meeting space */}
       <div style={{ textAlign: 'center', marginTop: '3rem' }}>
         <button className="pill" onClick={onEnterRoom} style={{ fontSize: '1.05rem', padding: '14px 38px' }}>
-          Enter the room
+          Enter meeting space
         </button>
       </div>
 

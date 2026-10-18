@@ -102,7 +102,7 @@ const initSocket = (server) => {
       console.log(`👥 ${socket.user.username} joined room ${roomId}`);
     });
 
-    // Synchronized Activity Change across partners
+    // Synchronized Activity Change across attendees
     socket.on('room:activity_change', ({ roomId, activity }) => {
       if (!roomId || !activity) return;
       const LocalDb = require('../config/localDb');
@@ -118,7 +118,7 @@ const initSocket = (server) => {
       });
     });
 
-    // Real-time Romantic Reactions (Hearts, Kisses, Sparkles, Candles)
+    // Real-time Reaction Pulses (Bolts, Stars, Moons, Focus marks)
     socket.on('room:reaction', ({ roomId, emoji }) => {
       if (!roomId || !emoji) return;
       io.to(roomId).emit('room:reaction', {

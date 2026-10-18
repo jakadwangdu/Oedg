@@ -6,14 +6,12 @@ import Hero from '../components/Hero';
 import RoomShell from '../components/RoomShell';
 import FeatureTrack from '../components/FeatureTrack';
 import QRScannerModal from '../components/room/QRScannerModal';
-import YoupiCheckoutModal from '../components/payment/YoupiCheckoutModal';
 import Footer from '../components/Footer';
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const [qrScannerOpen, setQrScannerOpen] = useState(false);
-  const [buyModalOpen, setBuyModalOpen] = useState(false);
 
   const handleStart = () => {
     if (user) {
@@ -47,26 +45,6 @@ export default function LandingPage() {
         </Link>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-          <button
-            onClick={() => setBuyModalOpen(true)}
-            className="mono"
-            style={{
-              color: '#fff',
-              background: 'none',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              borderRadius: 999,
-              padding: '6px 14px',
-              fontSize: 12,
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-            }}
-          >
-            <span>🏷️</span>
-            <span>Buy Website (₹1 Test)</span>
-          </button>
-
           <button
             onClick={() => setQrScannerOpen(true)}
             className="mono"
@@ -104,7 +82,7 @@ export default function LandingPage() {
                   color: '#000',
                 }}
               >
-                Start a date
+                Start a meeting
               </button>
             </>
           )}
@@ -131,7 +109,7 @@ export default function LandingPage() {
       >
         <div style={{ maxWidth: 640, margin: '0 auto' }}>
           <div className="mono" style={{ fontSize: 12, color: 'var(--w3)', marginBottom: '1rem', letterSpacing: '0.08em' }}>
-            PRIVATE SANCTUARY
+            A QUIET PRODUCTIVE SPACE
           </div>
           <h2
             style={{
@@ -142,7 +120,7 @@ export default function LandingPage() {
               marginBottom: '1.25rem',
             }}
           >
-            Ready for tonight?
+            Ready for your next meeting?
           </h2>
           <p
             style={{
@@ -152,11 +130,11 @@ export default function LandingPage() {
               marginBottom: '2.5rem',
             }}
           >
-            Create a room, send a link, and spend quiet hours watching cinema, listening to music, and talking.
+            Create a room, send a link, and run quiet, distraction-free meetings, design sprints, and working sessions.
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button className="pill" onClick={handleStart} style={{ fontSize: '1rem', padding: '14px 36px' }}>
-              {user ? 'Open Dashboard' : 'Start a date'}
+              {user ? 'Open Dashboard' : 'Start a meeting'}
             </button>
             <button
               onClick={() => setQrScannerOpen(true)}
@@ -164,19 +142,6 @@ export default function LandingPage() {
               style={{ fontSize: '1rem', padding: '14px 30px', cursor: 'pointer' }}
             >
               Scan room QR
-            </button>
-            <button
-              onClick={() => setBuyModalOpen(true)}
-              className="pill-ghost"
-              style={{
-                fontSize: '1rem',
-                padding: '14px 28px',
-                cursor: 'pointer',
-                borderColor: 'var(--w)',
-                color: 'var(--w)',
-              }}
-            >
-              🏷️ Buy Website (₹1 Test)
             </button>
             {!user && (
               <Link to="/login" className="pill-ghost" style={{ fontSize: '1rem', padding: '14px 32px' }}>
@@ -189,9 +154,6 @@ export default function LandingPage() {
 
       {/* QR Code Camera / Image Scanner Modal */}
       <QRScannerModal isOpen={qrScannerOpen} onClose={() => setQrScannerOpen(false)} />
-
-      {/* YouPI-PG Purchase & Transfer Modal */}
-      <YoupiCheckoutModal isOpen={buyModalOpen} onClose={() => setBuyModalOpen(false)} />
 
       {/* Production Footer */}
       <Footer />

@@ -60,7 +60,7 @@ export default function UniversalVideoPlayer({ roomId }) {
       }
 
       if (data.updatedBy) {
-        setPartnerNotice(`${data.updatedBy} synced the cinema ✦`);
+        setPartnerNotice(`${data.updatedBy} synced the presentation ✦`);
         setTimeout(() => setPartnerNotice(''), 3000);
       }
 
@@ -174,7 +174,7 @@ export default function UniversalVideoPlayer({ roomId }) {
                   letterSpacing: '-0.02em',
                 }}
               >
-                Universal Cinema Sync
+                Universal Presentation & Screen Sync
               </span>
               <span
                 className="mono"
@@ -201,7 +201,7 @@ export default function UniversalVideoPlayer({ roomId }) {
           <input
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
-            placeholder="Paste YouTube, MP4, or WebM URL..."
+            placeholder="Paste presentation URL, demo video, MP4, or YouTube..."
             style={{
               flex: 1,
               padding: '0.55rem 0.95rem',
@@ -321,7 +321,7 @@ export default function UniversalVideoPlayer({ roomId }) {
         }}
       >
         <span className="mono" style={{ fontSize: '0.75rem', color: 'var(--w3)' }}>
-          Curated streams:
+          Focus streams & demos:
         </span>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           {[

@@ -43,7 +43,7 @@ export default function Footer() {
                 letterSpacing: '-0.01em',
               }}
             >
-              A quiet space for two.
+              A quiet productive space.
             </span>
           </div>
 
@@ -57,24 +57,6 @@ export default function Footer() {
               fontSize: '0.8125rem',
             }}
           >
-            <Link
-              to="/buy?checkout=true"
-              style={{
-                color: 'var(--w)',
-                fontWeight: 500,
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                padding: '4px 10px',
-                borderRadius: 999,
-                background: 'var(--glass)',
-                border: '1px solid var(--line)',
-              }}
-            >
-              <span>🏷️</span>
-              <span>Buy this website (₹1 Test)</span>
-            </Link>
             <Link
               to="/help"
               style={{

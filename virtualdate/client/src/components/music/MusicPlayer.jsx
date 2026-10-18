@@ -2,29 +2,29 @@ import React, { useEffect, useRef, useState } from 'react';
 import { getSocket } from '../../services/socket';
 import { useRoomStore } from '../../store/roomStore';
 
-const ROMANTIC_TRACKS = [
+const FOCUS_TRACKS = [
   {
-    id: 'lofi-1',
-    title: 'Midnight Candlelight Lofi',
-    artist: 'VirtualDate Sanctuary',
+    id: 'focus-1',
+    title: 'Midnight Deep Work Lofi',
+    artist: 'Oedg Focus Space',
     url: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3',
   },
   {
-    id: 'lofi-2',
-    title: 'Rain on Window Glass',
-    artist: 'Cozy Raindrops',
+    id: 'focus-2',
+    title: 'Rain on Window Glass (Deep Focus)',
+    artist: 'Focus Waves',
     url: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=rain-and-nostalgia-chill-lofi-song-8193.mp3',
   },
   {
-    id: 'piano-1',
-    title: 'Starlight Romance Piano',
-    artist: 'Moonlit Melody',
+    id: 'focus-3',
+    title: 'Alpha Waves Flow Piano',
+    artist: 'Flow State',
     url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=relaxed-vlog-131746.mp3',
   },
   {
-    id: 'cafe-1',
-    title: 'Parisian Velvet Evening',
-    artist: 'Champs-Élysées Whisper',
+    id: 'focus-4',
+    title: 'Minimalist Ambient Evening',
+    artist: 'Clean Studio',
     url: 'https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939f792cb.mp3?filename=lofi-chill-medium-version-12099.mp3',
   },
 ];
@@ -32,7 +32,7 @@ const ROMANTIC_TRACKS = [
 export default function MusicPlayer({ roomId }) {
   const { musicState, setMusicState } = useRoomStore();
   const [activeMode, setActiveMode] = useState('sync'); // 'sync' | 'dhun'
-  const [currentTrack, setCurrentTrack] = useState(ROMANTIC_TRACKS[0]);
+  const [currentTrack, setCurrentTrack] = useState(FOCUS_TRACKS[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -51,13 +51,13 @@ export default function MusicPlayer({ roomId }) {
       isSyncingRef.current = true;
 
       if (data.url && (!currentTrack || currentTrack.url !== data.url)) {
-        const found = ROMANTIC_TRACKS.find((t) => t.url === data.url);
+        const found = FOCUS_TRACKS.find((t) => t.url === data.url);
         if (found) {
           setCurrentTrack(found);
         } else {
           setCurrentTrack({
             id: 'custom-' + Date.now(),
-            title: data.title || 'Partner Shared Audio',
+            title: data.title || 'Teammate Shared Audio',
             artist: data.artist || 'Web Stream',
             url: data.url,
           });
@@ -65,7 +65,7 @@ export default function MusicPlayer({ roomId }) {
       }
 
       if (data.updatedBy) {
-        setDjNotice(`${data.updatedBy} synced the music ✦`);
+        setDjNotice(`${data.updatedBy} synced focus audio ✦`);
         setTimeout(() => setDjNotice(''), 3000);
       }
 
@@ -413,7 +413,7 @@ export default function MusicPlayer({ roomId }) {
           {/* Preset Tracks Grid */}
           <div>
             <div className="mono" style={{ fontSize: 12, color: 'var(--w3)', marginBottom: '0.75rem' }}>
-              DHUN STATIONS
+              FOCUS AUDIO STATIONS
             </div>
             <div
               style={{
@@ -422,7 +422,7 @@ export default function MusicPlayer({ roomId }) {
                 gap: '0.75rem',
               }}
             >
-              {ROMANTIC_TRACKS.map((t) => {
+              {FOCUS_TRACKS.map((t) => {
                 const isSelected = currentTrack?.id === t.id;
                 return (
                   <div

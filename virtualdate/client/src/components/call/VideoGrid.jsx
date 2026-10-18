@@ -25,7 +25,7 @@ export default function VideoGrid({ roomId }) {
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [partnerScreenSharing, setPartnerScreenSharing] = useState(false);
   const [hasRemoteUser, setHasRemoteUser] = useState(false);
-  const [remoteUsername, setRemoteUsername] = useState('Partner');
+  const [remoteUsername, setRemoteUsername] = useState('Attendee');
   const [errorMessage, setErrorMessage] = useState('');
   const [isAudioOnly, setIsAudioOnly] = useState(false);
   const [incomingCall, setIncomingCall] = useState(null);
@@ -85,13 +85,13 @@ export default function VideoGrid({ roomId }) {
     const socket = getSocket();
     if (!socket) return;
 
-    // Incoming Call ring alert from partner
+    // Incoming Call ring alert from attendee
     const handleIncomingCall = ({ fromSocketId, fromUsername, fromAvatar, isAudioOnly: remoteAudioOnly }) => {
       remoteSocketIdRef.current = fromSocketId;
-      setRemoteUsername(fromUsername || 'Partner');
+      setRemoteUsername(fromUsername || 'Attendee');
       setIncomingCall({
         fromSocketId,
-        fromUsername: fromUsername || 'Partner',
+        fromUsername: fromUsername || 'Attendee',
         fromAvatar,
         isAudioOnly: remoteAudioOnly,
       });
@@ -105,14 +105,14 @@ export default function VideoGrid({ roomId }) {
 
     const handleOffer = async ({ offer, fromSocketId, user: senderUser }) => {
       remoteSocketIdRef.current = fromSocketId;
-      setRemoteUsername(senderUser?.username || 'Partner');
+      setRemoteUsername(senderUser?.username || 'Attendee');
 
       // If we don't have our peer connection or local stream ready yet, save offer
       if (!localStreamRef.current) {
         pendingOfferRef.current = { offer, fromSocketId, senderUser };
         setIncomingCall({
           fromSocketId,
-          fromUsername: senderUser?.username || 'Partner',
+          fromUsername: senderUser?.username || 'Attendee',
           fromAvatar: senderUser?.avatar,
           isAudioOnly: false,
         });
@@ -761,7 +761,7 @@ export default function VideoGrid({ roomId }) {
                 color: 'var(--color-bone)',
                 letterSpacing: '-0.02em',
               }}>
-                Video Sanctuary
+                Encrypted Meeting Call
               </span>
               {inCall && (
                 <span style={{
@@ -819,7 +819,7 @@ export default function VideoGrid({ roomId }) {
                   gap: '0.35rem',
                   cursor: 'pointer',
                 }}
-                title="Share your screen directly with partner"
+                title="Share your screen directly with attendees"
               >
                 <span>🖥️</span>
                 <span>Share Screen</span>
@@ -1249,7 +1249,7 @@ export default function VideoGrid({ roomId }) {
               Ringing {remoteUsername}...
             </p>
             <p style={{ fontSize: '0.8125rem', color: 'var(--color-slate)', marginTop: '0.35rem', maxWidth: 280 }}>
-              Partner will see an incoming call alert with Accept and Decline buttons on their screen.
+              Attendee will see an incoming call alert with Accept and Decline buttons on their screen.
             </p>
           </div>
         ) : null}
@@ -1325,7 +1325,7 @@ export default function VideoGrid({ roomId }) {
               gap: '0.4rem',
               cursor: 'pointer',
             }}
-            title={isScreenSharing ? 'Stop sharing screen' : 'Share your device screen with partner'}
+            title={isScreenSharing ? 'Stop sharing screen' : 'Share your device screen with attendees'}
           >
             <span>🖥️</span>
             <span>{isScreenSharing ? 'Stop Sharing' : 'Share Screen'}</span>

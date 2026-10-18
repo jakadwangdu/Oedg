@@ -11,7 +11,7 @@ const handleMovie = (socket, io) => {
       type: type || (isYt ? 'youtube' : 'direct'),
       playing: true,
       currentTime: 0,
-      updatedBy: socket.user?.username || 'Partner',
+      updatedBy: socket.user?.username || 'Teammate',
     };
 
     io.to(roomId).emit('movie:sync', movieState);

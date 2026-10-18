@@ -83,9 +83,9 @@ export default function YouTubePlayer({ roomId }) {
         background: 'rgba(20, 16, 32, 0.6)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '1.2rem' }}>🎬</span>
+          <span style={{ fontSize: '1.2rem' }}>📺</span>
           <span style={{ fontWeight: 600, fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
-            Movie Night
+            Synchronized Presentation
           </span>
           <span style={{
             fontSize: '0.7rem',
@@ -104,7 +104,7 @@ export default function YouTubePlayer({ roomId }) {
           <input
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
-            placeholder="Paste YouTube link (movie, trailer, video)..."
+            placeholder="Paste YouTube link (demo, sprint walkthrough, presentation)..."
             style={{
               flex: 1,
               padding: '0.5rem 0.85rem',
@@ -155,7 +155,7 @@ export default function YouTubePlayer({ roomId }) {
         />
       </div>
 
-      {/* Romantic Cozy Preset Suggestions */}
+      {/* Productive Stream Preset Suggestions */}
       <div style={{
         padding: '0.65rem 1.25rem',
         background: 'rgba(15, 12, 24, 0.7)',
@@ -168,7 +168,7 @@ export default function YouTubePlayer({ roomId }) {
         fontSize: '0.8rem',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <span style={{ color: 'var(--text-muted)' }}>Date Night Picks:</span>
+          <span style={{ color: 'var(--text-muted)' }}>Productivity Streams:</span>
           <button
             onClick={() => loadPreset('https://www.youtube.com/watch?v=TURbeWK2wwg')}
             style={{
@@ -193,7 +193,7 @@ export default function YouTubePlayer({ roomId }) {
               fontSize: '0.75rem',
             }}
           >
-            ☕ Lofi Cafe
+            ☕ Lofi Focus
           </button>
           <button
             onClick={() => loadPreset('https://www.youtube.com/watch?v=5qap5aO4i9A')}
@@ -206,12 +206,12 @@ export default function YouTubePlayer({ roomId }) {
               fontSize: '0.75rem',
             }}
           >
-            🌙 Midnight Chill
+            ⚡ Midnight Flow
           </button>
         </div>
 
         <span style={{ color: 'var(--text-faint)', fontSize: '0.75rem' }}>
-          💡 When you paste a link, your partner sees the same movie instantly!
+          💡 When you paste a link, your team sees the same video instantly!
         </span>
       </div>
     </div>

@@ -206,7 +206,7 @@ export default function AuthPage({ mode = 'login' }) {
               margin: 0,
             }}
           >
-            {isRegister ? 'Create your room and invite someone special.' : 'Sign in to enter your private room.'}
+            {isRegister ? 'Create your quiet workspace and invite your team.' : 'Sign in to access your productive meeting spaces.'}
           </p>
         </div>
 

@@ -21,7 +21,7 @@ export default function PrivacyPage() {
           <Logo size={24} word={true} />
         </Link>
         <Link to="/" className="mono" style={{ color: 'var(--w2)', fontSize: 13, textDecoration: 'none' }}>
-          ← Back to sanctuary
+          ← Back to workspace
         </Link>
       </nav>
 
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
               1. Direct Peer-to-Peer Encryption
             </h2>
             <p>
-              Oedg is architected as a quiet, private sanctuary. All live audio calls, video calls, and screen sharing sessions operate over direct WebRTC peer connections. Media packets are encrypted in transit using industry-standard Datagram Transport Layer Security (DTLS) and Secure Real-time Transport Protocol (SRTP).
+              Oedg is architected as a quiet productive workspace. All live audio calls, video calls, and screen sharing sessions operate over direct WebRTC peer connections. Media packets are encrypted in transit using industry-standard Datagram Transport Layer Security (DTLS) and Secure Real-time Transport Protocol (SRTP).
             </p>
             <p style={{ marginTop: '0.75rem' }}>
               <strong>Zero Recording Guarantee:</strong> We do not record, intercept, transcribe, or store your camera feeds, microphone audio, or screen sharing broadcasts on our servers.
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
               2. Anonymous Guest Access
             </h2>
             <p>
-              We believe intimacy should not require surrender of personal information. Partners joining rooms via shared invite links or QR codes are admitted as anonymous guests without requiring an email address, phone number, or password. Guest session tokens are transient and expire upon leaving the room.
+              We believe frictionless meetings should not require surrender of personal information. Teammates and clients joining rooms via shared invite links or QR codes are admitted as anonymous guests without requiring an email address, phone number, or password. Guest session tokens are transient and expire upon leaving the room.
             </p>
           </section>
 

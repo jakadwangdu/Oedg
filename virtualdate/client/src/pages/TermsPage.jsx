@@ -21,7 +21,7 @@ export default function TermsPage() {
           <Logo size={24} word={true} />
         </Link>
         <Link to="/" className="mono" style={{ color: 'var(--w2)', fontSize: 13, textDecoration: 'none' }}>
-          ← Back to sanctuary
+          ← Back to workspace
         </Link>
       </nav>
 
@@ -59,10 +59,10 @@ export default function TermsPage() {
 
           <section>
             <h2 style={{ fontSize: '1.35rem', fontWeight: 500, color: 'var(--w)', marginBottom: '0.75rem' }}>
-              2. Sanctuary Code of Conduct
+              2. Workspace Code of Conduct
             </h2>
             <p>
-              Oedg is designed exclusively as a private, intimate space for two people. You agree not to use the service for:
+              Oedg is designed as a quiet, productive workspace for remote meetings, synchronized presentations, and focused deep work. You agree not to use the service for:
             </p>
             <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
               <li>Broadcasting non-consensual content, harassment, stalking, or defamation.</li>
@@ -83,10 +83,10 @@ export default function TermsPage() {
 
           <section>
             <h2 style={{ fontSize: '1.35rem', fontWeight: 500, color: 'var(--w)', marginBottom: '0.75rem' }}>
-              4. Commercial Licensing & Acquisitions
+              4. Intellectual Property
             </h2>
             <p>
-              All trademarks, design tokens, source code architecture, and visual aesthetics of Oedg are protected by copyright. If you wish to acquire, license, or whitelabel the platform for commercial usage, please submit a formal inquiry via our <Link to="/buy" style={{ color: 'var(--w)', textDecoration: 'underline' }}>Acquisition Page</Link>.
+              All trademarks, design tokens, source code architecture, and visual aesthetics of Oedg are protected by copyright. Unauthorized reproduction, modification, or redistribution of proprietary assets is strictly prohibited.
             </p>
           </section>
 

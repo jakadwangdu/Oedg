@@ -15,7 +15,7 @@ import GameRoom from '../components/games/GameRoom';
 import QRCodeModal from '../components/room/QRCodeModal';
 import HeroField from '../components/HeroField';
 
-const REACTION_EMOJIS = ['♡', '✦', '☾', '❋', '◌', '✧'];
+const REACTION_EMOJIS = ['⚡', '✦', '☾', '❋', '◌', '✧'];
 
 export default function RoomPage() {
   const { roomId } = useParams();
@@ -56,7 +56,7 @@ export default function RoomPage() {
   const [guestNameInput, setGuestNameInput] = useState('');
   const [isJoiningGuest, setIsJoiningGuest] = useState(false);
 
-  // Floating Romantic Reaction Particles
+  // Floating Reaction Pulses
   const [particles, setParticles] = useState([]);
 
   // Session Duration Timer
@@ -103,7 +103,7 @@ export default function RoomPage() {
         setLoading(false);
       } catch (err) {
         if (mounted) {
-          setError(err.response?.data?.message || 'Sanctuary not found');
+          setError(err.response?.data?.message || 'Meeting room not found');
           setLoading(false);
         }
       }
@@ -175,7 +175,7 @@ export default function RoomPage() {
     }
 
     if (!user || !token) {
-      const result = await guestLogin(guestNameInput || 'Partner');
+      const result = await guestLogin(guestNameInput || 'Colleague');
       if (!result.success) {
         setPasswordError('Failed to join as guest');
         setIsJoiningGuest(false);
@@ -312,7 +312,7 @@ export default function RoomPage() {
             letterSpacing: '-0.04em',
             marginBottom: '0.4rem',
           }}>
-            {room?.name || 'Private Sanctuary'}
+            {room?.name || 'Meeting Room'}
           </h2>
 
           <p style={{
@@ -322,7 +322,7 @@ export default function RoomPage() {
             lineHeight: 1.5,
           }}>
             {needsPassword
-              ? 'This date room is protected with a private password.'
+              ? 'This meeting room is protected with a private password.'
               : 'Direct guest entry. No accounts or signup required.'}
           </p>
 
@@ -335,7 +335,7 @@ export default function RoomPage() {
                 <input
                   value={guestNameInput}
                   onChange={(e) => setGuestNameInput(e.target.value)}
-                  placeholder="e.g. Alex or Sweetheart"
+                  placeholder="e.g. Alex Rivera or Jordan"
                   style={{
                     width: '100%',
                     background: 'var(--k2)',
@@ -487,7 +487,7 @@ export default function RoomPage() {
                 textOverflow: 'ellipsis',
                 maxWidth: '160px',
               }}>
-                {room?.name || 'Private Date'}
+                {room?.name || 'Meeting Room'}
               </h2>
               {room?.hasPassword && <span style={{ fontSize: '0.75rem' }} title="Password Protected">🔒</span>}
             </div>
@@ -734,7 +734,7 @@ export default function RoomPage() {
                 cursor: 'pointer',
                 flexShrink: 0,
               }}
-              title={`Send ${emoji} to partner`}
+              title={`Send ${emoji} to team`}
             >
               {emoji}
             </button>
@@ -763,11 +763,11 @@ export default function RoomPage() {
         flexShrink: 0,
       }}>
         {[
-          { id: 'movie', label: 'Cinema', icon: '◫' },
-          { id: 'music', label: 'Dhun', icon: '♩' },
+          { id: 'movie', label: 'Present', icon: '◫' },
+          { id: 'music', label: 'Audio', icon: '♩' },
           { id: 'whiteboard', label: 'Canvas', icon: '✎' },
           { id: 'games', label: 'Arcade', icon: '❖' },
-          { id: 'call', label: 'Video', icon: '◉' },
+          { id: 'call', label: 'Meeting', icon: '◉' },
         ].map((tab) => {
           const isActive = currentActivity === tab.id;
           return (
@@ -842,7 +842,7 @@ export default function RoomPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span style={{ color: 'var(--w)', fontSize: '0.9rem' }}>✦</span>
                 <span style={{ fontWeight: 500, color: 'var(--w1)', fontSize: '0.9375rem' }}>
-                  Whisper Notes
+                  Meeting Chat
                 </span>
               </div>
               <button

@@ -12,7 +12,7 @@ const handleMusic = (socket, io) => {
       cover: cover || '',
       playing: true,
       currentTime: 0,
-      updatedBy: socket.user?.username || 'Partner',
+      updatedBy: socket.user?.username || 'Teammate',
     };
 
     io.to(roomId).emit('music:sync', musicState);

@@ -2,11 +2,11 @@ import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 
 const TABS = [
-  { id: 'movie', label: 'Watch' },
-  { id: 'music', label: 'Dhun' },
+  { id: 'call', label: 'Meeting Call' },
   { id: 'whiteboard', label: 'Canvas' },
+  { id: 'movie', label: 'Present' },
+  { id: 'music', label: 'Focus Audio' },
   { id: 'games', label: 'Arcade' },
-  { id: 'call', label: 'Call' },
 ];
 
 export default function ActivityTabs({ currentActivity, onSelectActivity }) {

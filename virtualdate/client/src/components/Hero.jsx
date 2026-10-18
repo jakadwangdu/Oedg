@@ -48,7 +48,7 @@ export default function Hero({ onStart, onScanQR }) {
     return () => ctx.revert();
   }, []);
 
-  const words = 'A quiet space for two.'.split(' ');
+  const words = 'A quiet productive space.'.split(' ');
 
   return (
     <header
@@ -89,7 +89,7 @@ export default function Hero({ onStart, onScanQR }) {
         }}
       >
         <h1
-          aria-label="A quiet space for two."
+          aria-label="A quiet productive space."
           style={{
             fontSize: 'clamp(52px, 10vw, 150px)',
             maxWidth: '10ch',
@@ -126,14 +126,14 @@ export default function Hero({ onStart, onScanQR }) {
         <p
           className="hero-sub"
           style={{
-            maxWidth: '44ch',
+            maxWidth: '46ch',
             margin: '28px auto 36px',
             color: 'var(--w2)',
             fontSize: 'clamp(1rem, 2vw, 1.15rem)',
             lineHeight: 1.6,
           }}
         >
-          Watch together, listen together, draw together. No accounts, no noise. Just the two of you, after dark.
+          Meetings, whiteboard sprints, and deep focus sessions. Direct peer encryption, zero distraction. A quiet space to do your best work.
         </p>
 
         <div className="hero-actions-container" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -146,7 +146,7 @@ export default function Hero({ onStart, onScanQR }) {
               cursor: 'pointer',
             }}
           >
-            Start a date
+            Start a meeting
           </button>
           {onScanQR && (
             <button

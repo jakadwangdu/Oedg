@@ -6,28 +6,28 @@ gsap.registerPlugin(ScrollTrigger);
 
 const FEATURES = [
   {
-    tag: '01 / CINEMA',
+    tag: '01 / WALKTHROUGHS',
     title: 'Frames in lockstep',
-    desc: 'Universal cinema sync with sub-second precision. When you press play, pause, or seek, your partner stays in the exact same moment.',
-    glyph: '🎬',
+    desc: 'Universal media and presentation sync with sub-second precision. When you play, pause, or scrub, every participant stays aligned in exact lockstep.',
+    glyph: '▶',
   },
   {
-    tag: '02 / CALLS',
+    tag: '02 / MEETINGS',
     title: 'Private by default',
-    desc: 'Direct WebRTC peer encrypted calls and screen share. Your sanctuary runs device-to-device with zero recordings or observers.',
+    desc: 'Direct WebRTC peer encrypted calls and screen share. Your meetings run device-to-device with zero recordings, cloud surveillance, or observers.',
     glyph: '✦',
   },
   {
     tag: '03 / ONBOARDING',
-    title: 'No signup for her',
-    desc: 'Send a one-click link or scan a QR code from any phone. She enters the room in two seconds without passwords or downloads.',
+    title: 'Zero-friction entry',
+    desc: 'Send a one-click link or scan a QR code from any phone. Teammates and clients enter the room in two seconds without passwords or mandatory downloads.',
     glyph: '◌',
   },
   {
-    tag: '04 / PRESENCE',
-    title: 'Gentle calls',
-    desc: 'A quiet, dusk-lit ring alert with polite Accept and Decline controls. No startling alarms, no jarring interruptions.',
-    glyph: '♡',
+    tag: '04 / DEEP WORK',
+    title: 'Focus canvas & audio',
+    desc: 'Collaborative real-time whiteboard and focus audio. Brainstorm architectures, sketch ideas, and run quiet, distraction-free sprint sessions.',
+    glyph: '⚡',
   },
 ];
 
@@ -232,7 +232,7 @@ export default function FeatureTrack() {
             letterSpacing: '0.06em',
           }}
         >
-          SANCTUARY ARCHITECTURE
+          WORKSPACE ARCHITECTURE
         </div>
         <h2
           style={{
@@ -242,7 +242,7 @@ export default function FeatureTrack() {
             fontWeight: 500,
           }}
         >
-          Crafted for quiet intimacy.
+          Crafted for quiet productivity.
         </h2>
       </div>
 

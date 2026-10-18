@@ -1,5 +1,5 @@
 export const theme = {
-  name: 'romantic-midnight',
+  name: 'quiet-productive-space',
   colors: {
     bgPrimary: '#08060d',
     bgSecondary: 'rgba(18, 14, 28, 0.85)',
