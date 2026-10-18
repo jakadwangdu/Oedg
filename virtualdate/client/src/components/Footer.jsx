@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ExternalLink, ShieldCheck } from 'lucide-react';
 import Logo from './Logo';
 
 export default function Footer() {
@@ -116,14 +117,19 @@ export default function Footer() {
                 textDecoration: 'underline',
                 textUnderlineOffset: '3px',
                 transition: 'color 0.2s',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem',
               }}
             >
-              jakadwangdu
+              <span>jakadwangdu</span>
+              <ExternalLink size={12} strokeWidth={1.75} />
             </a>
           </div>
 
-          <div className="mono" style={{ fontSize: 12 }}>
-            Direct peer encrypted link &middot; Geist typography
+          <div className="mono" style={{ fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+            <ShieldCheck size={13} strokeWidth={2} style={{ color: '#10b981' }} />
+            <span>Direct peer encrypted &middot; Geist typography</span>
           </div>
         </div>
       </div>

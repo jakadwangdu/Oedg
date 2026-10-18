@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Tv, Headphones, PenTool, Gamepad2, Network, Play, Pause, Send, ArrowRight } from 'lucide-react';
 import Logo from './Logo';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -37,7 +38,13 @@ export default function RoomShell({ onEnterRoom }) {
   const [inputText, setInputText] = useState('');
   const [particles, setParticles] = useState([]);
 
-  const tabNames = ['Present', 'Focus Audio', 'Canvas', 'Arcade', 'Flow'];
+  const tabs = [
+    { name: 'Present', icon: Tv },
+    { name: 'Focus Audio', icon: Headphones },
+    { name: 'Canvas', icon: PenTool },
+    { name: 'Arcade', icon: Gamepad2 },
+    { name: 'Flow', icon: Network },
+  ];
 
   // Frame scroll entrance scale effect
   useLayoutEffect(() => {
@@ -317,7 +324,7 @@ export default function RoomShell({ onEnterRoom }) {
                 }}
               />
 
-              {tabNames.map((name, i) => {
+              {tabs.map(({ name, icon: Icon }, i) => {
                 const isActive = activeTab === i;
                 return (
                   <button
@@ -327,7 +334,7 @@ export default function RoomShell({ onEnterRoom }) {
                     style={{
                       position: 'relative',
                       zIndex: 2,
-                      padding: '7px 18px',
+                      padding: '7px 16px',
                       borderRadius: 999,
                       fontSize: 13,
                       fontWeight: 500,
@@ -336,9 +343,13 @@ export default function RoomShell({ onEnterRoom }) {
                       cursor: 'pointer',
                       border: 'none',
                       background: 'transparent',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
                     }}
                   >
-                    {name}
+                    <Icon size={13} strokeWidth={2} />
+                    <span>{name}</span>
                   </button>
                 );
               })}
@@ -399,7 +410,7 @@ export default function RoomShell({ onEnterRoom }) {
                       }}
                       onClick={() => setIsPlaying(!isPlaying)}
                     >
-                      {isPlaying ? '⏸' : '▶'}
+                      {isPlaying ? <Pause size={22} fill="currentColor" /> : <Play size={22} fill="currentColor" style={{ marginLeft: 3 }} />}
                     </div>
                     <span className="mono" style={{ fontSize: 13, color: 'var(--w2)' }}>
                       Product Architecture Walkthrough &middot; 14:20 / 32:00
@@ -869,9 +880,13 @@ export default function RoomShell({ onEnterRoom }) {
                   fontWeight: 600,
                   fontSize: 12,
                   cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 5,
                 }}
               >
-                Send
+                <span>Send</span>
+                <Send size={11} strokeWidth={2.2} />
               </button>
             </form>
           </div>
@@ -880,8 +895,19 @@ export default function RoomShell({ onEnterRoom }) {
 
       {/* Button to enter actual meeting space */}
       <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-        <button className="pill" onClick={onEnterRoom} style={{ fontSize: '1.05rem', padding: '14px 38px' }}>
-          Enter meeting space
+        <button
+          className="pill"
+          onClick={onEnterRoom}
+          style={{
+            fontSize: '1.05rem',
+            padding: '14px 38px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <span>Enter meeting space</span>
+          <ArrowRight size={16} strokeWidth={2} />
         </button>
       </div>
 

@@ -1,12 +1,15 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Activity, ArrowRight, QrCode } from 'lucide-react';
 import HeroField from './HeroField';
+import useLiveTelemetry from '../lib/useLiveTelemetry';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero({ onStart, onScanQR }) {
   const root = useRef(null);
+  const { latency, activeSessions, isOnline } = useLiveTelemetry();
 
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
@@ -86,7 +89,7 @@ export default function Hero({ onStart, onScanQR }) {
           margin: '0 auto',
         }}
       >
-        {/* Live Traffic & Active Team Indicator */}
+        {/* Real-time Live Network Telemetry (Zero fake traffic) */}
         <div
           className="mono"
           style={{
@@ -100,6 +103,7 @@ export default function Hero({ onStart, onScanQR }) {
             marginBottom: '1.75rem',
             fontSize: '0.8125rem',
             color: 'var(--w2)',
+            backdropFilter: 'blur(10px)',
           }}
         >
           <span
@@ -107,14 +111,19 @@ export default function Hero({ onStart, onScanQR }) {
               width: 7,
               height: 7,
               borderRadius: '50%',
-              background: '#10b981',
-              boxShadow: '0 0 10px #10b981',
+              background: isOnline ? '#10b981' : '#f59e0b',
+              boxShadow: isOnline ? '0 0 10px #10b981' : 'none',
               display: 'inline-block',
             }}
           />
-          <span style={{ color: 'var(--w1)', fontWeight: 500 }}>1,428 active collaborators online</span>
+          <span style={{ color: 'var(--w1)', fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+            <Activity size={12} strokeWidth={2.2} style={{ color: '#10b981' }} />
+            Live Edge Mesh: {latency}
+          </span>
           <span style={{ opacity: 0.35 }}>•</span>
-          <span style={{ color: 'var(--w3)' }}>18.4k meetings hosted</span>
+          <span style={{ color: 'var(--w3)' }}>
+            {activeSessions === 1 ? '1 active peer on this node' : `${activeSessions} active peers on this node`}
+          </span>
         </div>
 
         <h1
@@ -173,9 +182,13 @@ export default function Hero({ onStart, onScanQR }) {
               fontSize: '1rem',
               padding: '14px 34px',
               cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
             }}
           >
-            Start a meeting
+            <span>Start a meeting</span>
+            <ArrowRight size={16} strokeWidth={2} />
           </button>
           {onScanQR && (
             <button
@@ -185,9 +198,13 @@ export default function Hero({ onStart, onScanQR }) {
                 fontSize: '1rem',
                 padding: '14px 28px',
                 cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
               }}
             >
-              Scan QR to enter
+              <QrCode size={16} strokeWidth={1.75} />
+              <span>Scan QR to enter</span>
             </button>
           )}
         </div>

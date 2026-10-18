@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowLeft, Camera, Check } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import api from '../services/api';
 import Logo from '../components/Logo';
@@ -70,8 +71,9 @@ export default function ProfilePage() {
           <Link to="/dashboard" style={{ display: 'inline-flex', alignItems: 'center' }}>
             <Logo size={22} word={true} />
           </Link>
-          <Link to="/dashboard" className="mono" style={{ color: 'var(--w3)', fontSize: 12, textDecoration: 'none' }}>
-            ← Dashboard
+          <Link to="/dashboard" className="mono" style={{ color: 'var(--w3)', fontSize: 12, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <ArrowLeft size={13} strokeWidth={2} />
+            <span>Dashboard</span>
           </Link>
         </div>
 
@@ -113,10 +115,13 @@ export default function ProfilePage() {
               padding: '6px 16px',
               fontSize: 12,
               cursor: 'pointer',
-              display: 'inline-block',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
             }}
           >
-            Select avatar
+            <Camera size={13} strokeWidth={1.75} />
+            <span>Change avatar</span>
             <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
           </label>
         </div>
@@ -168,10 +173,18 @@ export default function ProfilePage() {
               padding: '12px',
               fontSize: '0.95rem',
               cursor: saving ? 'not-allowed' : 'pointer',
-              opacity: saving ? 0.7 : 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
             }}
           >
-            {saving ? 'Saving...' : 'Save changes'}
+            {saving ? 'Saving...' : (
+              <>
+                <Check size={15} strokeWidth={2} />
+                <span>Save changes</span>
+              </>
+            )}
           </button>
         </form>
       </div>

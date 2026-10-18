@@ -1,39 +1,41 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
+import React, { useRef } from 'react';
+import { PlayCircle, ShieldCheck, QrCode, PenTool, Sparkles, Layers, ArrowUpRight } from 'lucide-react';
 
 const FEATURES = [
   {
-    tag: '01 / WALKTHROUGHS',
+    tag: '01 / SYNCHRONIZATION',
     title: 'Frames in lockstep',
     desc: 'Universal media and presentation sync with sub-second precision. When you play, pause, or scrub, every participant stays aligned in exact lockstep.',
-    glyph: '▶',
+    Icon: PlayCircle,
+    secondaryTag: 'Sub-second sync',
   },
   {
-    tag: '02 / MEETINGS',
+    tag: '02 / PRIVACY ARCHITECTURE',
     title: 'Private by default',
     desc: 'Direct WebRTC peer encrypted calls and screen share. Your meetings run device-to-device with zero recordings, cloud surveillance, or observers.',
-    glyph: '✦',
+    Icon: ShieldCheck,
+    secondaryTag: '256-bit DTLS',
   },
   {
-    tag: '03 / ONBOARDING',
+    tag: '03 / ACCESSIBILITY',
     title: 'Zero-friction entry',
     desc: 'Send a one-click link or scan a QR code from any phone. Teammates and clients enter the room in two seconds without passwords or mandatory downloads.',
-    glyph: '◌',
+    Icon: QrCode,
+    secondaryTag: 'Zero download',
   },
   {
-    tag: '04 / DEEP WORK',
+    tag: '04 / DEEP COLLABORATION',
     title: 'Focus canvas & audio',
     desc: 'Collaborative real-time whiteboard and focus audio. Brainstorm architectures, sketch ideas, and run quiet, distraction-free sprint sessions.',
-    glyph: '⚡',
+    Icon: PenTool,
+    secondaryTag: 'Peer canvas',
   },
 ];
 
 function Card({ f, index }) {
   const cardRef = useRef(null);
   const spotRef = useRef(null);
+  const { Icon } = f;
 
   const handlePointerMove = (e) => {
     if (!cardRef.current || !spotRef.current) return;
@@ -41,7 +43,7 @@ function Card({ f, index }) {
     const x = e.clientX - r.left;
     const y = e.clientY - r.top;
     spotRef.current.style.opacity = '1';
-    spotRef.current.style.background = `radial-gradient(300px circle at ${x}px ${y}px, rgba(255, 255, 255, 0.13), transparent 70%)`;
+    spotRef.current.style.background = `radial-gradient(400px circle at ${x}px ${y}px, rgba(255, 255, 255, 0.08), transparent 70%)`;
   };
 
   const handlePointerLeave = () => {
@@ -55,10 +57,7 @@ function Card({ f, index }) {
       onPointerLeave={handlePointerLeave}
       className="feature-track-card"
       style={{
-        width: 'min(78vw, 520px)',
-        height: 'min(56vh, 440px)',
-        minHeight: 380,
-        borderRadius: 28,
+        borderRadius: 24,
         background: 'var(--k1)',
         border: '1px solid var(--line)',
         position: 'relative',
@@ -66,10 +65,10 @@ function Card({ f, index }) {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: '2.5rem',
+        padding: '2.25rem',
         boxSizing: 'border-box',
-        flexShrink: 0,
-        willChange: 'transform',
+        minHeight: 340,
+        transition: 'border-color 0.3s ease, transform 0.3s ease',
       }}
     >
       {/* Zero-lag hardware accelerated spotlight effect */}
@@ -86,37 +85,60 @@ function Card({ f, index }) {
         }}
       />
 
-      {/* Top content */}
+      {/* Top Header & Tag */}
       <div style={{ position: 'relative', zIndex: 2 }}>
         <div
-          className="mono"
           style={{
-            fontSize: 12,
-            letterSpacing: '0.08em',
-            color: 'var(--w3)',
-            marginBottom: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: '1.25rem',
           }}
         >
-          {f.tag}
+          <span
+            className="mono"
+            style={{
+              fontSize: '0.75rem',
+              letterSpacing: '0.08em',
+              color: 'var(--w3)',
+            }}
+          >
+            {f.tag}
+          </span>
+          <span
+            className="mono"
+            style={{
+              fontSize: '0.6875rem',
+              color: 'rgba(255, 255, 255, 0.45)',
+              padding: '3px 9px',
+              borderRadius: 999,
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+            }}
+          >
+            {f.secondaryTag}
+          </span>
         </div>
+
         <h3
           style={{
-            fontSize: 'clamp(1.75rem, 3vw, 2.4rem)',
+            fontSize: 'clamp(1.5rem, 2.2vw, 1.85rem)',
             fontWeight: 500,
             color: 'var(--w)',
-            letterSpacing: '-0.04em',
-            marginBottom: '1rem',
-            lineHeight: 1.05,
+            letterSpacing: '-0.03em',
+            marginBottom: '0.85rem',
+            lineHeight: 1.15,
           }}
         >
           {f.title}
         </h3>
+
         <p
           style={{
             color: 'var(--w2)',
-            fontSize: '0.975rem',
+            fontSize: '0.9375rem',
             lineHeight: 1.6,
-            maxWidth: '38ch',
+            maxWidth: '44ch',
             margin: 0,
           }}
         >
@@ -124,137 +146,119 @@ function Card({ f, index }) {
         </p>
       </div>
 
-      {/* Concentric rings art area */}
+      {/* Premium Graphic Anchor Area */}
       <div
         aria-hidden="true"
         style={{
           position: 'relative',
-          height: 120,
+          height: 90,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           pointerEvents: 'none',
           overflow: 'hidden',
           zIndex: 1,
+          marginTop: '1.5rem',
+          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+          paddingTop: '1rem',
         }}
       >
-        <span
+        {/* Subtle Ambient Pulse Rings */}
+        <div
           style={{
             position: 'absolute',
-            fontSize: '1.25rem',
+            width: 72,
+            height: 72,
+            borderRadius: '50%',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            animation: 'ring 4.5s cubic-bezier(0.16, 1, 0.3, 1) infinite',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            width: 110,
+            height: 110,
+            borderRadius: '50%',
+            border: '1px solid rgba(255, 255, 255, 0.06)',
+            animation: 'ring 4.5s cubic-bezier(0.16, 1, 0.3, 1) infinite',
+            animationDelay: '-2.2s',
+          }}
+        />
+
+        {/* Center Premium Icon Badge */}
+        <div
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 14,
+            background: 'rgba(255, 255, 255, 0.07)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             color: 'var(--w)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
             zIndex: 2,
-            opacity: 0.9,
           }}
         >
-          {f.glyph}
-        </span>
-        {[0, 1, 2, 3].map((i) => (
-          <div
-            key={i}
-            style={{
-              position: 'absolute',
-              width: 90,
-              height: 90,
-              borderRadius: '50%',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              animation: 'ring 4.5s cubic-bezier(0.16, 1, 0.3, 1) infinite',
-              animationDelay: `${-i * 1.1}s`,
-            }}
-          />
-        ))}
+          <Icon size={20} strokeWidth={1.75} />
+        </div>
       </div>
     </div>
   );
 }
 
 export default function FeatureTrack() {
-  const section = useRef(null);
-  const track = useRef(null);
-
-  useLayoutEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mm = gsap.matchMedia();
-
-    mm.add('(min-width: 821px) and (prefers-reduced-motion: no-preference)', () => {
-      const tr = track.current;
-      if (!tr) return;
-      tr.style.overflow = 'visible';
-      tr.style.width = 'max-content';
-
-      const d = () => tr.scrollWidth - window.innerWidth + 120;
-
-      gsap.to(tr, {
-        x: () => -d(),
-        ease: 'none',
-        scrollTrigger: {
-          trigger: section.current,
-          start: 'top top',
-          end: () => '+=' + d(),
-          pin: true,
-          scrub: 0.6,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      return () => {
-        tr.style.overflow = '';
-        tr.style.width = '';
-      };
-    });
-
-    return () => mm.revert();
-  }, []);
-
   return (
     <section
-      ref={section}
       style={{
         position: 'relative',
         background: 'var(--k)',
-        padding: '5rem 0',
-        overflow: 'hidden',
+        padding: '5rem 1.5rem 6rem',
+        borderTop: '1px solid var(--line)',
       }}
     >
       <div
         style={{
           maxWidth: 1200,
           margin: '0 auto 3rem',
-          padding: '0 2rem',
         }}
       >
         <div
           className="mono"
           style={{
-            fontSize: 13,
+            fontSize: '0.8125rem',
             color: 'var(--w3)',
             marginBottom: '0.75rem',
-            letterSpacing: '0.06em',
+            letterSpacing: '0.08em',
           }}
         >
           WORKSPACE ARCHITECTURE
         </div>
         <h2
           style={{
-            fontSize: 'clamp(2.2rem, 5vw, 3.8rem)',
+            fontSize: 'clamp(2.2rem, 4.5vw, 3.6rem)',
             color: 'var(--w)',
             letterSpacing: '-0.04em',
             fontWeight: 500,
+            lineHeight: 1.1,
+            margin: 0,
           }}
         >
           Crafted for quiet productivity.
         </h2>
       </div>
 
+      {/* Responsive Architectural Bento Grid - No janky pin traps, seamless natural desktop scroll */}
       <div
-        ref={track}
         className="feature-track-container"
         style={{
-          display: 'flex',
-          gap: '2rem',
-          padding: '0 2rem',
-          boxSizing: 'border-box',
-          flexWrap: 'nowrap',
+          maxWidth: 1200,
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 520px), 1fr))',
+          gap: '1.75rem',
         }}
       >
         {FEATURES.map((f, i) => (

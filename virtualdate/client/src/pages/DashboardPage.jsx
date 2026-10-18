@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { QrCode, Plus, X, Trash2, Lock, Copy, Check, LogOut } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import api from '../services/api';
 import Logo from '../components/Logo';
@@ -264,17 +265,27 @@ export default function DashboardPage() {
             <button
               onClick={() => setQrScannerOpen(true)}
               className="pill-ghost"
-              style={{ padding: '9px 18px', fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+              style={{ padding: '9px 18px', fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
             >
-              <span>📱</span>
+              <QrCode size={14} strokeWidth={1.75} />
               <span>Scan QR</span>
             </button>
             <button
               onClick={() => setShowCreate(!showCreate)}
               className="pill"
-              style={{ padding: '10px 22px', fontSize: 13 }}
+              style={{ padding: '10px 22px', fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
             >
-              {showCreate ? '✕ Cancel' : '+ Create room'}
+              {showCreate ? (
+                <>
+                  <X size={14} strokeWidth={2} />
+                  <span>Cancel</span>
+                </>
+              ) : (
+                <>
+                  <Plus size={14} strokeWidth={2} />
+                  <span>Create room</span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -425,8 +436,8 @@ export default function DashboardPage() {
                         {room.name}
                       </h3>
                       {room.hasPassword && (
-                        <span title="Password Protected" style={{ fontSize: '0.85rem' }}>
-                          🔒
+                        <span title="Password Protected" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                          <Lock size={12} strokeWidth={2} style={{ color: 'var(--w3)' }} />
                         </span>
                       )}
                     </div>
@@ -439,10 +450,12 @@ export default function DashboardPage() {
                         fontSize: '0.9rem',
                         padding: '0.2rem',
                         cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
                       }}
                       title="Delete room"
                     >
-                      ✕
+                      <Trash2 size={14} strokeWidth={1.75} />
                     </button>
                   </div>
                   <p
@@ -476,24 +489,41 @@ export default function DashboardPage() {
                     onClick={() => setQrModalRoom(room)}
                     className="pill-ghost"
                     style={{
-                      padding: '9px 14px',
+                      padding: '9px 12px',
                       fontSize: '0.8125rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
                     }}
                     title="Scan QR Code to join"
                   >
-                    QR
+                    <QrCode size={13} strokeWidth={1.75} />
+                    <span>QR</span>
                   </button>
 
                   <button
                     onClick={() => copyRoomLink(room.roomId)}
                     className="pill-ghost"
                     style={{
-                      padding: '9px 14px',
+                      padding: '9px 12px',
                       fontSize: '0.8125rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
                     }}
                     title="Copy invite link"
                   >
-                    {copiedId === room.roomId ? '✓ Copied' : 'Link'}
+                    {copiedId === room.roomId ? (
+                      <>
+                        <Check size={13} strokeWidth={2} style={{ color: '#10b981' }} />
+                        <span style={{ color: '#10b981' }}>Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={13} strokeWidth={1.75} />
+                        <span>Link</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
