@@ -4,6 +4,7 @@ import { useAuthStore } from '../store/authStore';
 import api from '../services/api';
 import Logo from '../components/Logo';
 import QRCodeModal from '../components/room/QRCodeModal';
+import QRScannerModal from '../components/room/QRScannerModal';
 
 export default function DashboardPage() {
   const { user, logout } = useAuthStore();
@@ -16,6 +17,7 @@ export default function DashboardPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
   const [qrModalRoom, setQrModalRoom] = useState(null);
+  const [qrScannerOpen, setQrScannerOpen] = useState(false);
 
   const fetchRooms = async () => {
     try {
@@ -175,13 +177,23 @@ export default function DashboardPage() {
             </h2>
           </div>
 
-          <button
-            onClick={() => setShowCreate(!showCreate)}
-            className="pill"
-            style={{ padding: '10px 22px', fontSize: 13 }}
-          >
-            {showCreate ? '✕ Cancel' : '+ Create room'}
-          </button>
+          <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setQrScannerOpen(true)}
+              className="pill-ghost"
+              style={{ padding: '9px 18px', fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+            >
+              <span>📱</span>
+              <span>Scan QR</span>
+            </button>
+            <button
+              onClick={() => setShowCreate(!showCreate)}
+              className="pill"
+              style={{ padding: '10px 22px', fontSize: 13 }}
+            >
+              {showCreate ? '✕ Cancel' : '+ Create room'}
+            </button>
+          </div>
         </div>
 
         {/* Create Room Drawer */}
@@ -416,6 +428,12 @@ export default function DashboardPage() {
           onClose={() => setQrModalRoom(null)}
         />
       )}
+
+      {/* QR Scanner Modal */}
+      <QRScannerModal
+        isOpen={qrScannerOpen}
+        onClose={() => setQrScannerOpen(false)}
+      />
     </div>
   );
 }

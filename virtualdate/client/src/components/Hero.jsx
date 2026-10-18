@@ -5,7 +5,7 @@ import HeroField from './HeroField';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Hero({ onStart }) {
+export default function Hero({ onStart, onScanQR }) {
   const root = useRef(null);
 
   useLayoutEffect(() => {
@@ -48,7 +48,7 @@ export default function Hero({ onStart }) {
     return () => ctx.revert();
   }, []);
 
-  const words = 'A quiet room for two.'.split(' ');
+  const words = 'A quiet space for two.'.split(' ');
 
   return (
     <header
@@ -89,7 +89,7 @@ export default function Hero({ onStart }) {
         }}
       >
         <h1
-          aria-label="A quiet room for two."
+          aria-label="A quiet space for two."
           style={{
             fontSize: 'clamp(52px, 10vw, 150px)',
             maxWidth: '10ch',
@@ -136,17 +136,32 @@ export default function Hero({ onStart }) {
           Watch together, listen together, draw together. No accounts, no noise. Just the two of you, after dark.
         </p>
 
-        <button
-          className="pill hero-cta"
-          onClick={onStart}
-          style={{
-            fontSize: '1rem',
-            padding: '14px 34px',
-            cursor: 'pointer',
-          }}
-        >
-          Start a date
-        </button>
+        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button
+            className="pill hero-cta"
+            onClick={onStart}
+            style={{
+              fontSize: '1rem',
+              padding: '14px 34px',
+              cursor: 'pointer',
+            }}
+          >
+            Start a date
+          </button>
+          {onScanQR && (
+            <button
+              className="pill-ghost hero-cta"
+              onClick={onScanQR}
+              style={{
+                fontSize: '1rem',
+                padding: '14px 28px',
+                cursor: 'pointer',
+              }}
+            >
+              Scan QR to enter
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );

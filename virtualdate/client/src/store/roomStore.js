@@ -12,8 +12,19 @@ export const useRoomStore = create((set) => ({
   setRoom: (room) => set({ room }),
   setParticipants: (participants) => set({ participants }),
   addMessage: (message) => set((state) => {
-    if (message?._id && state.messages.some((m) => m._id === message._id)) {
+    if (!message) return state;
+    // 1. Prevent duplicate by exact _id
+    if (message._id && state.messages.some((m) => m._id === message._id)) {
       return state;
+    }
+    // 2. Prevent duplicate of optimistic messages: if this matches a pending temp message with same text
+    const tempIdx = state.messages.findIndex(
+      (m) => String(m._id || '').startsWith('temp_') && m.text === message.text
+    );
+    if (tempIdx !== -1) {
+      const updated = [...state.messages];
+      updated[tempIdx] = message;
+      return { messages: updated };
     }
     return { messages: [...state.messages, message] };
   }),

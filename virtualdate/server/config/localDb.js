@@ -35,6 +35,7 @@ const LocalDb = {
   findUser: (query) => {
     const users = readJSON(USERS_FILE);
     return users.find((u) => {
+      if (query.googleId && u.googleId === query.googleId) return true;
       if (query.email && u.email?.toLowerCase() === query.email.toLowerCase()) return true;
       if (query.username && u.username?.toLowerCase() === query.username.toLowerCase()) return true;
       if (query._id && u._id === query._id) return true;
@@ -51,8 +52,26 @@ const LocalDb = {
       username,
       email: email.toLowerCase(),
       passwordHash,
+      googleId: '',
       avatar: '',
       bio: '',
+      createdAt: new Date().toISOString(),
+    };
+    users.push(newUser);
+    writeJSON(USERS_FILE, users);
+    return newUser;
+  },
+
+  createGoogleUser: async ({ username, email, avatar, googleId }) => {
+    const users = readJSON(USERS_FILE);
+    const newUser = {
+      _id: uuidv4(),
+      username,
+      email: email.toLowerCase(),
+      passwordHash: '',
+      googleId: googleId || '',
+      avatar: avatar || '',
+      bio: 'Connected via Google account ✦',
       createdAt: new Date().toISOString(),
     };
     users.push(newUser);

@@ -19,7 +19,11 @@ const userSchema = new mongoose.Schema({
   },
   passwordHash: {
     type: String,
-    required: true,
+    default: '',
+  },
+  googleId: {
+    type: String,
+    default: '',
   },
   avatar: {
     type: String,

@@ -57,6 +57,20 @@ export const useAuthStore = create(
         }
       },
 
+      googleLogin: async ({ credential, email, name, avatar, googleId }) => {
+        set({ loading: true, error: null });
+        try {
+          const { data } = await api.post('/auth/google', { credential, email, name, avatar, googleId });
+          set({ user: data, token: data.token, loading: false });
+          api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+          return { success: true, user: data };
+        } catch (err) {
+          const msg = err.response?.data?.message || 'Google login failed';
+          set({ loading: false, error: msg });
+          return { success: false, error: msg };
+        }
+      },
+
       updateUser: (userData) => {
         set({ user: { ...get().user, ...userData } });
       },

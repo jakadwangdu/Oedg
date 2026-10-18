@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import Logo from '../components/Logo';
 import Hero from '../components/Hero';
 import RoomShell from '../components/RoomShell';
 import FeatureTrack from '../components/FeatureTrack';
+import QRScannerModal from '../components/room/QRScannerModal';
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const [qrScannerOpen, setQrScannerOpen] = useState(false);
 
   const handleStart = () => {
     if (user) {
@@ -41,7 +43,25 @@ export default function LandingPage() {
           <Logo size={26} word={true} />
         </Link>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <button
+            onClick={() => setQrScannerOpen(true)}
+            className="mono"
+            style={{
+              color: '#fff',
+              background: 'none',
+              border: 'none',
+              fontSize: 13,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+            }}
+          >
+            <span>📱</span>
+            <span>Scan QR</span>
+          </button>
+
           {user ? (
             <Link to="/dashboard" className="mono" style={{ color: '#fff', textDecoration: 'none', fontSize: 13 }}>
               Dashboard →
@@ -69,7 +89,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <Hero onStart={handleStart} />
+      <Hero onStart={handleStart} onScanQR={() => setQrScannerOpen(true)} />
 
       {/* Pinned / Interactive Room Window */}
       <RoomShell onEnterRoom={handleStart} />
@@ -115,6 +135,13 @@ export default function LandingPage() {
             <button className="pill" onClick={handleStart} style={{ fontSize: '1rem', padding: '14px 36px' }}>
               {user ? 'Open Dashboard' : 'Start a date'}
             </button>
+            <button
+              onClick={() => setQrScannerOpen(true)}
+              className="pill-ghost"
+              style={{ fontSize: '1rem', padding: '14px 30px', cursor: 'pointer' }}
+            >
+              Scan room QR
+            </button>
             {!user && (
               <Link to="/login" className="pill-ghost" style={{ fontSize: '1rem', padding: '14px 32px' }}>
                 Sign in to room
@@ -123,6 +150,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* QR Code Camera / Image Scanner Modal */}
+      <QRScannerModal isOpen={qrScannerOpen} onClose={() => setQrScannerOpen(false)} />
 
       {/* Minimalist Footer */}
       <footer
@@ -141,7 +171,7 @@ export default function LandingPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <Logo size={20} word={true} />
           <span className="mono" style={{ fontSize: 12, color: 'var(--w3)' }}>
-            A quiet room for two.
+            A quiet space for two.
           </span>
         </div>
 

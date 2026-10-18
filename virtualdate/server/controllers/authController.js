@@ -184,4 +184,117 @@ const guestLogin = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getMe, guestLogin };
+// @desc    Google OAuth Login / Registration
+// @route   POST /api/auth/google
+const googleLogin = async (req, res) => {
+  try {
+    const { credential, email, name, avatar, googleId } = req.body;
+    let userEmail = email;
+    let userName = name;
+    let userAvatar = avatar;
+    let userGoogleId = googleId;
+
+    // Decode JWT credential from Google Identity Services if provided
+    if (credential) {
+      try {
+        const decoded = jwt.decode(credential);
+        if (decoded && decoded.email) {
+          userEmail = decoded.email;
+          userName = userName || decoded.name || decoded.email.split('@')[0];
+          userAvatar = userAvatar || decoded.picture;
+          userGoogleId = userGoogleId || decoded.sub;
+        }
+      } catch (e) {
+        console.warn('Could not decode Google credential token, using fallback fields:', e.message);
+      }
+    }
+
+    if (!userEmail) {
+      return res.status(400).json({ message: 'Google email is required' });
+    }
+
+    const cleanEmail = userEmail.trim().toLowerCase();
+    const cleanUsername = (userName || cleanEmail.split('@')[0]).replace(/[^a-zA-Z0-9_]/g, '_').slice(0, 25);
+
+    // 1. Try Mongoose if connected
+    if (isMongooseConnected()) {
+      try {
+        let user = await User.findOne({
+          $or: [
+            ...(userGoogleId ? [{ googleId: userGoogleId }] : []),
+            { email: cleanEmail },
+          ],
+        });
+
+        if (!user) {
+          let finalUsername = cleanUsername;
+          const nameTaken = await User.findOne({ username: finalUsername });
+          if (nameTaken) {
+            finalUsername = `${cleanUsername}_${Math.floor(100 + Math.random() * 900)}`;
+          }
+
+          user = await User.create({
+            username: finalUsername,
+            email: cleanEmail,
+            avatar: userAvatar || '',
+            googleId: userGoogleId || '',
+            passwordHash: '',
+            bio: 'Connected via Google account ✦',
+          });
+        } else {
+          let modified = false;
+          if (userAvatar && !user.avatar) {
+            user.avatar = userAvatar;
+            modified = true;
+          }
+          if (userGoogleId && !user.googleId) {
+            user.googleId = userGoogleId;
+            modified = true;
+          }
+          if (modified) await user.save();
+        }
+
+        return res.json({
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          avatar: user.avatar,
+          bio: user.bio,
+          token: generateToken(user._id),
+        });
+      } catch (dbErr) {
+        console.warn('Mongoose Google login failed, trying local DB:', dbErr.message);
+      }
+    }
+
+    // 2. Local DB Fallback
+    let localUser = LocalDb.findUser({ googleId: userGoogleId }) || LocalDb.findUser({ email: cleanEmail });
+    if (!localUser) {
+      let finalUsername = cleanUsername;
+      const nameTaken = LocalDb.findUser({ username: finalUsername });
+      if (nameTaken) {
+        finalUsername = `${cleanUsername}_${Math.floor(100 + Math.random() * 900)}`;
+      }
+      localUser = await LocalDb.createGoogleUser({
+        username: finalUsername,
+        email: cleanEmail,
+        avatar: userAvatar || '',
+        googleId: userGoogleId || '',
+      });
+    }
+
+    return res.json({
+      _id: localUser._id,
+      username: localUser.username,
+      email: localUser.email,
+      avatar: localUser.avatar,
+      bio: localUser.bio,
+      token: generateToken(localUser._id),
+    });
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(500).json({ message: error.message || 'Google login failed' });
+  }
+};
+
+module.exports = { register, login, getMe, guestLogin, googleLogin };

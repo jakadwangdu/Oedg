@@ -32,17 +32,14 @@ export default function ChatBox({ roomId }) {
     };
   }, [roomId, setMessages]);
 
-  // 2. Direct socket listener on ChatBox for 100% reliable reception
+  // 2. Direct socket listener on ChatBox for reaction particles
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
 
     const handleReceive = (msg) => {
-      if (msg) {
-        addMessage(msg);
-        if (msg.type === 'emoji' || MONO_REACTIONS.includes(msg.text)) {
-          spawnParticle(msg.text);
-        }
+      if (msg && (msg.type === 'emoji' || MONO_REACTIONS.includes(msg.text))) {
+        spawnParticle(msg.text);
       }
     };
 
@@ -50,7 +47,7 @@ export default function ChatBox({ roomId }) {
     return () => {
       socket.off('chat:receive', handleReceive);
     };
-  }, [addMessage]);
+  }, []);
 
   // 3. Smooth auto-scroll
   useEffect(() => {
@@ -58,14 +55,19 @@ export default function ChatBox({ roomId }) {
   }, [messages]);
 
   const spawnParticle = (glyph) => {
+    const id = Date.now() + Math.random();
     setParticles((prev) => [
       ...prev,
       {
-        id: Date.now() + Math.random(),
+        id,
         glyph,
         x: Math.random() * 70 + 15,
       },
     ]);
+    // Guaranteed removal after animation duration so icons never get stuck overlaying chat
+    setTimeout(() => {
+      setParticles((prev) => prev.filter((item) => item.id !== id));
+    }, 2000);
   };
 
   const handleSend = (e) => {
