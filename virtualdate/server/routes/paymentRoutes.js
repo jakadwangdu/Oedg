@@ -8,6 +8,8 @@ const {
   getAllOrders,
 } = require('../controllers/paymentController');
 
+const { protect } = require('../middleware/authMiddleware');
+
 // Public route to initiate website purchase payment with YouPI-PG
 router.post('/create-order', createPaymentOrder);
 
@@ -20,7 +22,7 @@ router.post('/verify-utr', verifyPaymentUtr);
 // Webhook endpoint for YouPI-PG gateway automated verification
 router.post('/webhook', express.raw({ type: 'application/json' }), handleYoupiWebhook);
 
-// Retrieve all orders (dashboard view)
-router.get('/orders', getAllOrders);
+// Retrieve all orders (protected - authenticated dashboard view only)
+router.get('/orders', protect, getAllOrders);
 
 module.exports = router;

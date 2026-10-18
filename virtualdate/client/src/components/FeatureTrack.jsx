@@ -33,20 +33,19 @@ const FEATURES = [
 
 function Card({ f, index }) {
   const cardRef = useRef(null);
-  const [spotlight, setSpotlight] = useState({ x: 0, y: 0, active: false });
+  const spotRef = useRef(null);
 
   const handlePointerMove = (e) => {
-    if (!cardRef.current) return;
+    if (!cardRef.current || !spotRef.current) return;
     const r = cardRef.current.getBoundingClientRect();
-    setSpotlight({
-      x: e.clientX - r.left,
-      y: e.clientY - r.top,
-      active: true,
-    });
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    spotRef.current.style.opacity = '1';
+    spotRef.current.style.background = `radial-gradient(300px circle at ${x}px ${y}px, rgba(255, 255, 255, 0.13), transparent 70%)`;
   };
 
   const handlePointerLeave = () => {
-    setSpotlight((prev) => ({ ...prev, active: false }));
+    if (spotRef.current) spotRef.current.style.opacity = '0';
   };
 
   return (
@@ -70,20 +69,22 @@ function Card({ f, index }) {
         padding: '2.5rem',
         boxSizing: 'border-box',
         flexShrink: 0,
+        willChange: 'transform',
       }}
     >
-      {/* Spotlight effect */}
-      {spotlight.active && (
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            pointerEvents: 'none',
-            background: `radial-gradient(300px circle at ${spotlight.x}px ${spotlight.y}px, rgba(255, 255, 255, 0.13), transparent 70%)`,
-          }}
-        />
-      )}
+      {/* Zero-lag hardware accelerated spotlight effect */}
+      <div
+        ref={spotRef}
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          opacity: 0,
+          transition: 'opacity 0.25s ease',
+          willChange: 'background, opacity',
+        }}
+      />
 
       {/* Top content */}
       <div style={{ position: 'relative', zIndex: 2 }}>

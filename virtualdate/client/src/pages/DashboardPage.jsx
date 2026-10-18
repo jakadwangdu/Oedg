@@ -531,7 +531,7 @@ export default function DashboardPage() {
                 YOUPI-PG SOVEREIGN RECEIVING ACCOUNT
               </div>
               <div style={{ fontSize: '1.25rem', fontWeight: 500, color: 'var(--w)', marginBottom: '0.25rem' }}>
-                Receiving UPI: <strong style={{ color: 'var(--w)' }}>jakadwangdu@upi</strong>
+                Receiving UPI: <strong style={{ color: 'var(--w)' }}>0001shaurya@fam</strong>
               </div>
               <div style={{ fontSize: '0.85rem', color: 'var(--w2)' }}>
                 Website Sale Price: <strong style={{ color: 'var(--w)' }}>₹4,500 (4.5K INR)</strong> &middot; 0% Platform Fees (P2P Direct Bank Settlement)

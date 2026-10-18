@@ -22,6 +22,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html.lenis {
   height: auto;
 }
@@ -32,7 +36,10 @@ body {
   color: var(--w1);
   font: 400 17px/1.55 var(--font);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  transform: translateZ(0);
 }
 
 h1, h2, h3 {

@@ -32,7 +32,7 @@ export default function HeroField({ densityMultiplier = 1, interactive = true })
         py = H * 0.35;
       }
 
-      const baseCount = W < 600 ? 650 : 1700;
+      const baseCount = W < 600 ? 300 : 850;
       const count = Math.round(baseCount * densityMultiplier);
       P = Array.from({ length: count }, () => ({
         x: Math.random() * W,
@@ -181,6 +181,8 @@ export default function HeroField({ densityMultiplier = 1, interactive = true })
         height: '100%',
         zIndex: 0,
         pointerEvents: interactive ? 'auto' : 'none',
+        willChange: 'transform',
+        transform: 'translateZ(0)',
       }}
     />
   );

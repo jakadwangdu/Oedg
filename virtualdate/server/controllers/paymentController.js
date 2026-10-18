@@ -27,8 +27,8 @@ const createPaymentOrder = async (req, res) => {
     const amount = 4500; // 4.5K INR
     const currency = 'INR';
 
-    const upiVpa = process.env.YOUPI_UPI_VPA || 'jakadwangdu@upi';
-    const payeeName = process.env.YOUPI_PAYEE_NAME || 'Oedg Platform';
+    const upiVpa = process.env.YOUPI_UPI_VPA || '0001shaurya@fam';
+    const payeeName = process.env.YOUPI_PAYEE_NAME || 'Shaurya';
     const note = `Oedg Website Transfer ${orderId}`;
 
     // Standard YouPI-PG / UPI Intent URL
@@ -266,7 +266,20 @@ const getAllOrders = async (req, res) => {
         orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       }
     }
-    res.json(orders);
+
+    const sanitized = orders.map((o) => ({
+      orderId: o.orderId,
+      amount: o.amount,
+      currency: o.currency || 'INR',
+      buyerPhone: o.buyerPhone,
+      buyerName: o.buyerName || '',
+      buyerEmail: o.buyerEmail || '',
+      status: o.status,
+      transferStatus: o.transferStatus || 'PENDING_TRANSFER',
+      utr: o.utr || '',
+      createdAt: o.createdAt,
+    }));
+    res.json(sanitized);
   } catch (error) {
     console.error('[YouPI-PG] getAllOrders Error:', error);
     res.status(500).json({ message: 'Failed to retrieve orders.' });
