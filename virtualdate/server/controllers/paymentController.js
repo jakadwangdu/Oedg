@@ -248,9 +248,35 @@ const handleYoupiWebhook = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Get all website purchase orders (for admin / owner dashboard)
+ * @route   GET /api/payment/orders
+ */
+const getAllOrders = async (req, res) => {
+  try {
+    let orders = [];
+    if (isMongoActive()) {
+      orders = await Order.find().sort({ createdAt: -1 });
+    } else {
+      const fs = require('fs');
+      const path = require('path');
+      const ORDERS_FILE = path.join(__dirname, '../data/orders.json');
+      if (fs.existsSync(ORDERS_FILE)) {
+        orders = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf-8') || '[]');
+        orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      }
+    }
+    res.json(orders);
+  } catch (error) {
+    console.error('[YouPI-PG] getAllOrders Error:', error);
+    res.status(500).json({ message: 'Failed to retrieve orders.' });
+  }
+};
+
 module.exports = {
   createPaymentOrder,
   getPaymentStatus,
   verifyPaymentUtr,
   handleYoupiWebhook,
+  getAllOrders,
 };

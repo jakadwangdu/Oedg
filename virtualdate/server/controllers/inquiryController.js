@@ -107,4 +107,27 @@ const submitHelpRequest = async (req, res) => {
   }
 };
 
-module.exports = { submitBuyInquiry, submitHelpRequest };
+// @desc    Get all inquiries & help requests
+// @route   GET /api/inquiries/all
+const getAllInquiries = async (req, res) => {
+  try {
+    let inquiries = [];
+    if (isMongooseConnected()) {
+      inquiries = await Inquiry.find().sort({ createdAt: -1 });
+    } else {
+      const fs = require('fs');
+      const path = require('path');
+      const INQ_FILE = path.join(__dirname, '../data/inquiries.json');
+      if (fs.existsSync(INQ_FILE)) {
+        inquiries = JSON.parse(fs.readFileSync(INQ_FILE, 'utf-8') || '[]');
+        inquiries.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      }
+    }
+    res.json(inquiries);
+  } catch (err) {
+    console.error('getAllInquiries error:', err);
+    res.status(500).json({ message: 'Failed to retrieve inquiries.' });
+  }
+};
+
+module.exports = { submitBuyInquiry, submitHelpRequest, getAllInquiries };

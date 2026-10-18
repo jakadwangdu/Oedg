@@ -5,6 +5,7 @@ const {
   getPaymentStatus,
   verifyPaymentUtr,
   handleYoupiWebhook,
+  getAllOrders,
 } = require('../controllers/paymentController');
 
 // Public route to initiate website purchase payment with YouPI-PG
@@ -18,5 +19,8 @@ router.post('/verify-utr', verifyPaymentUtr);
 
 // Webhook endpoint for YouPI-PG gateway automated verification
 router.post('/webhook', express.raw({ type: 'application/json' }), handleYoupiWebhook);
+
+// Retrieve all orders (dashboard view)
+router.get('/orders', getAllOrders);
 
 module.exports = router;
