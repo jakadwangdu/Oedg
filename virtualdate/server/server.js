@@ -16,6 +16,14 @@ const server = http.createServer(app);
 // Init Socket.IO
 initSocket(server);
 
+// Core Middleware
+app.use(cors({
+  origin: (origin, callback) => callback(null, true),
+  credentials: true,
+}));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
 // Production Security Headers Middleware
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -53,6 +61,7 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/rooms', require('./routes/roomRoutes'));
 app.use('/api/agora', require('./routes/agoraRoutes'));
 app.use('/api/inquiries', rateLimiter(15, 60000), require('./routes/inquiryRoutes'));
+app.use('/api/payment', rateLimiter(25, 60000), require('./routes/paymentRoutes'));
 
 // Health check
 app.get('/api/health', (req, res) => {

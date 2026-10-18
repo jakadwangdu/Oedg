@@ -58,7 +58,7 @@ export default function Footer() {
             }}
           >
             <Link
-              to="/buy"
+              to="/buy?checkout=true"
               style={{
                 color: 'var(--w)',
                 fontWeight: 500,
@@ -73,7 +73,7 @@ export default function Footer() {
               }}
             >
               <span>🏷️</span>
-              <span>Buy this website</span>
+              <span>Buy this website (₹4.5K)</span>
             </Link>
             <Link
               to="/help"

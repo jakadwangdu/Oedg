@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import Logo from '../components/Logo';
 import Footer from '../components/Footer';
+import YoupiCheckoutModal from '../components/payment/YoupiCheckoutModal';
 import api from '../services/api';
 
 export default function BuyPage() {
+  const [searchParams] = useSearchParams();
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('buy') === 'true' || searchParams.get('checkout') === 'true') {
+      setCheckoutOpen(true);
+    }
+  }, [searchParams]);
+
   const [form, setForm] = useState({
     name: '',
     email: '',
     inquiryType: 'Full Source Code & IP Purchase',
-    budget: '$1,500 – $5,000',
+    budget: '₹4,500 (4.5K Fixed)',
     message: '',
   });
 
@@ -152,7 +162,82 @@ export default function BuyPage() {
           ))}
         </div>
 
-        {/* Contact / Purchase Form Card */}
+        {/* INSTANT ACQUISITION CARD: ₹4,500 (4.5K) via YouPI-PG */}
+        <div
+          style={{
+            background: 'linear-gradient(180deg, var(--k2) 0%, var(--k1) 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: 28,
+            padding: 'clamp(2rem, 5vw, 3.5rem)',
+            marginBottom: '3rem',
+            textAlign: 'center',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            className="mono"
+            style={{
+              fontSize: 12,
+              letterSpacing: '0.08em',
+              color: 'var(--w3)',
+              marginBottom: '0.75rem',
+            }}
+          >
+            OFFICIAL PLATFORM SALE &middot; 0% FEE YOUPI-PG
+          </div>
+          <h2
+            style={{
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              fontWeight: 500,
+              letterSpacing: '-0.035em',
+              color: 'var(--w)',
+              marginBottom: '0.75rem',
+            }}
+          >
+            Buy this Website for ₹4,500
+          </h2>
+          <p
+            style={{
+              color: 'var(--w2)',
+              fontSize: '1.05rem',
+              lineHeight: 1.6,
+              maxWidth: 620,
+              margin: '0 auto 2rem',
+            }}
+          >
+            Instant ownership transfer. Includes complete frontend & backend source code, GitHub repository transfer, Vercel deployment credentials, and peer WebRTC video architecture.
+          </p>
+
+          <div
+            style={{
+              display: 'inline-flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '1rem',
+            }}
+          >
+            <button
+              onClick={() => setCheckoutOpen(true)}
+              className="pill"
+              style={{
+                fontSize: '1.1rem',
+                padding: '16px 40px',
+                background: '#fff',
+                color: '#000',
+                fontWeight: 600,
+                boxShadow: '0 10px 30px rgba(255, 255, 255, 0.15)',
+              }}
+            >
+              🏷️ Buy Website for ₹4,500 (4.5K) →
+            </button>
+            <span style={{ fontSize: '0.85rem', color: 'var(--w3)' }}>
+              🔒 Powered by YouPI-PG UPI Gateway &middot; Enter your phone number for direct handover
+            </span>
+          </div>
+        </div>
+
+        {/* Contact / Custom Whitelabel Inquiry Form Card */}
         <div
           style={{
             background: 'var(--k1)',
@@ -295,6 +380,9 @@ export default function BuyPage() {
           </div>
         </div>
       </main>
+
+      {/* YouPI-PG Purchase & Transfer Modal */}
+      <YoupiCheckoutModal isOpen={checkoutOpen} onClose={() => setCheckoutOpen(false)} />
 
       {/* Footer */}
       <Footer />

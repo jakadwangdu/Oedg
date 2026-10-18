@@ -6,12 +6,14 @@ import Hero from '../components/Hero';
 import RoomShell from '../components/RoomShell';
 import FeatureTrack from '../components/FeatureTrack';
 import QRScannerModal from '../components/room/QRScannerModal';
+import YoupiCheckoutModal from '../components/payment/YoupiCheckoutModal';
 import Footer from '../components/Footer';
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const [qrScannerOpen, setQrScannerOpen] = useState(false);
+  const [buyModalOpen, setBuyModalOpen] = useState(false);
 
   const handleStart = () => {
     if (user) {
@@ -45,6 +47,26 @@ export default function LandingPage() {
         </Link>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <button
+            onClick={() => setBuyModalOpen(true)}
+            className="mono"
+            style={{
+              color: '#fff',
+              background: 'none',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              borderRadius: 999,
+              padding: '6px 14px',
+              fontSize: 12,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+            }}
+          >
+            <span>🏷️</span>
+            <span>Buy Website (₹4.5K)</span>
+          </button>
+
           <button
             onClick={() => setQrScannerOpen(true)}
             className="mono"
@@ -143,6 +165,19 @@ export default function LandingPage() {
             >
               Scan room QR
             </button>
+            <button
+              onClick={() => setBuyModalOpen(true)}
+              className="pill-ghost"
+              style={{
+                fontSize: '1rem',
+                padding: '14px 28px',
+                cursor: 'pointer',
+                borderColor: 'var(--w)',
+                color: 'var(--w)',
+              }}
+            >
+              🏷️ Buy Website (₹4.5K)
+            </button>
             {!user && (
               <Link to="/login" className="pill-ghost" style={{ fontSize: '1rem', padding: '14px 32px' }}>
                 Sign in to room
@@ -154,6 +189,9 @@ export default function LandingPage() {
 
       {/* QR Code Camera / Image Scanner Modal */}
       <QRScannerModal isOpen={qrScannerOpen} onClose={() => setQrScannerOpen(false)} />
+
+      {/* YouPI-PG Purchase & Transfer Modal */}
+      <YoupiCheckoutModal isOpen={buyModalOpen} onClose={() => setBuyModalOpen(false)} />
 
       {/* Production Footer */}
       <Footer />

@@ -192,6 +192,46 @@ const LocalDb = {
     writeJSON(INQUIRIES_FILE, inquiries);
     return newInquiry;
   },
+
+  // ORDERS (YouPI-PG Website Purchases)
+  createOrder: (orderData) => {
+    const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
+    const orders = readJSON(ORDERS_FILE);
+    const newOrder = {
+      _id: 'ord_' + uuidv4(),
+      amount: 4500,
+      currency: 'INR',
+      status: 'PENDING',
+      transferStatus: 'PENDING_TRANSFER',
+      paymentGateway: 'YouPI-PG',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...orderData,
+    };
+    orders.push(newOrder);
+    writeJSON(ORDERS_FILE, orders);
+    return newOrder;
+  },
+
+  findOrder: (orderId) => {
+    const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
+    const orders = readJSON(ORDERS_FILE);
+    return orders.find((o) => o.orderId === orderId);
+  },
+
+  updateOrder: (orderId, updates) => {
+    const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
+    const orders = readJSON(ORDERS_FILE);
+    const idx = orders.findIndex((o) => o.orderId === orderId);
+    if (idx === -1) return null;
+    orders[idx] = {
+      ...orders[idx],
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
+    writeJSON(ORDERS_FILE, orders);
+    return orders[idx];
+  },
 };
 
 module.exports = LocalDb;
