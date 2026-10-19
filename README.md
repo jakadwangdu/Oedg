@@ -1,6 +1,6 @@
-# Oedg — VirtualDate 🌙
+# Oedg — QuiteSpace
 
-> A dusk-lit, real-time shared workspace for couples and friends to connect, stream, draw, play, and speak in quiet harmony.
+> A dusk-lit, real-time shared workspace for friends to connect, stream, draw, play, and talk.
 
 [![Vercel Deployment](https://img.shields.io/badge/Deployed_on-Vercel-black?style=flat&logo=vercel)](https://vercel.com)
 [![GitHub License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -10,7 +10,7 @@
 
 ## ✦ Overview
 
-**Oedg** is an intimate virtual sanctuary built with pure React, Socket.IO, WebRTC, and the editorial **Dimension** aesthetic (frosted glass panels, 9999px pills, DM Sans medium typography, and 1px hairline edges).
+**Oedg** is an intimate Space sanctuary built with pure React, Socket.IO, WebRTC, and the editorial **Dimension** aesthetic (frosted glass panels, 9999px pills, DM Sans medium typography, and 1px hairline edges).
 
 It enables two or more people to share interactive moments in real time across smartphones, tablets, and laptops without required account registrations or friction.
 
@@ -24,10 +24,8 @@ It enables two or more people to share interactive moments in real time across s
 - 🖥️ **Screen Sharing**: One-click screen sharing across laptops and supported mobile browsers with real-time video track replacement.
 - 🎨 **Real-Time Canvas**: Collaborative whiteboard with live stroke broadcasting, customizable colors from the Dimension palette, emoji stamp placement, and pointer awareness.
 - 🎮 **Arcade Games**: Built-in real-time Tic-Tac-Toe and embedded web games (Skribbl.io, Gartic Phone, Smash Karts, Lichess, or any custom URL).
-- 💬 **Whisper Notes & Pulse Reactions**: Real-time optimistic messaging, floating particle reactions (❤️, 🕯️, ✨, 💋, 🌹, 🥂), and instant status updates.
-- 📱 **QR Code Direct Entry**: Generate a scannable QR code or link for instant mobile access with zero signup required for your partner.
-- 🔒 **Optional Room Security**: Rooms can be created with an optional password for private sessions.
-
+- 💬 ** Notes & Pulse Reactions**: Real-time optimistic messaging, and instant status updates.
+- 📱 **QR Code Direct Entry**: Generate a scannable QR code or link for instant mobile access with zero signup required for your Friends.
 ---
 
 ## 🎨 Dimension Design System
@@ -110,24 +108,3 @@ Open `http://localhost:5173` in your browser.
 
 ---
 
-## 🌐 Hosting on Vercel
-
-### Option A: Import via Vercel Web Dashboard (Recommended)
-
-1. Go to [vercel.com/new](https://vercel.com/new).
-2. Select your GitHub repository **`jakadwangdu/Oedg`**.
-3. In **Project Settings**:
-   - **Framework Preset**: `Vite`
-   - **Root Directory**: `virtualdate/client` (or leave as root `/` since `vercel.json` handles build routing automatically).
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-4. Add Environment Variables (optional, if using external backend):
-   - `VITE_API_URL`: Your deployed backend API URL (e.g. `https://your-backend.onrender.com/api`)
-   - `VITE_SOCKET_URL`: Your deployed backend socket URL (e.g. `https://your-backend.onrender.com`)
-5. Click **Deploy**. Vercel will build and assign an instant production URL with automatic HTTPS and edge CDN caching.
-
----
-
-## 📜 License
-
-MIT License &copy; 2026 jakadwangdu
